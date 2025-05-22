@@ -1,0 +1,24 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    Require not ip 2400:4052:e02:4300:4c48:bbde:41af:fee9
+    #LsRecaptcha 100
+    #RewriteRule .* - [E=verifycaptcha:drop]
+
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    <IfModule mod_headers.c>
+        Header set X-Robots-Tag "index, follow"
+        Header always set X-Content-Type-Options "nosniff"
+        Header always set X-Frame-Options "SAMEORIGIN"
+        Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    </IfModule>
+
+    RewriteCond %{HTTP_USER_AGENT} (masscan|sqlmap|curl|python|nmap) [NC]
+    RewriteRule .* - [F,L]
+
+    # Rewrite Laravel về public/
+    RewriteRule ^(.*)$ public/$1 [L]
+    RewriteCond %{REQUEST_URI} ^/admin/login$ [NC]
+</IfModule>
