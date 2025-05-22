@@ -55,15 +55,23 @@ Route::get('/the-loai/{slug}', [CategoryController::class, 'index'])->name('cate
 Route::get('/truyen/{slug}', [StoryController::class, 'index'])->name('story');
 Route::get('/{slugStory}/{slugChapter}', [ChapterController::class, 'index'])->name('chapter');
 
+// Route kiểm tra cache
+Route::get('/test-cache', [StoryController::class, 'testCache'])->name('test.cache');
+
 Route::get('/tim-kiem', [HomeController::class, 'mainSearchStory'])->name('main.search.story');
 Route::get('/phan-loai-theo-chuong', [StoryController::class, 'followChaptersCount'])->name('get.list.story.with.chapters.count');
 Route::delete('/delete-tagged-notification/{notificationId}', [NotificationController::class, 'deleteTaggedNotification']);
 
 // Sitemap Routes
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
-Route::get('sitemap/categories', [SitemapController::class, 'categories'])->name('sitemap.categories');
-Route::get('sitemap/stories', [SitemapController::class, 'stories'])->name('sitemap.stories');
-Route::get('sitemap/chapters', [SitemapController::class, 'chapters'])->name('sitemap.chapters');
+// Alternative sitemap routes
+Route::get('sitemap-categories.xml', [SitemapController::class, 'categories'])->name('sitemap.categories.alt');
+Route::get('sitemap-stories.xml', [SitemapController::class, 'stories'])->name('sitemap.stories.alt');
+Route::get('sitemap-chapters.xml', [SitemapController::class, 'chapters'])->name('sitemap.chapters.alt');
+// Sitemap cho các trang chính
+Route::get('sitemap-main-pages.xml', [SitemapController::class, 'mainPages'])->name('sitemap.main.pages');
+// Sitemap cho tác giả
+Route::get('sitemap-authors.xml', [SitemapController::class, 'authors'])->name('sitemap.authors');
 
 // Ajax Routes
 Route::post('/ajax/get-chapters', [ChapterController::class, 'getChapters'])->name('get.chapters');
@@ -101,7 +109,7 @@ Route::post('/chat/send', [ChatController::class, 'store'])->middleware('auth');
 // Middleware: Check Banned IP
 Route::group(['middleware' => 'check.ip.ban'], function () {
     Route::middleware(['check.ban:ban_login'])->group(function () {
-        Route::post('/live/{id}/pin', [LiveController::class, 'pin'])->name('live.pin');
+        //Route::post('/live/{id}/pin', [LiveController::class, 'pin'])->name('live.pin');
 
         Route::post('/comments/{comment}/react', [CommentReactionController::class, 'react'])->name('comments.react');
     });

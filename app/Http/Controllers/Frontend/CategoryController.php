@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Helpers\Helper;
+use App\Helpers\CacheHelper;
 use App\Models\Story;
 use App\Repositories\Category\CategoryRepositoryInterface;
 use App\Repositories\Chapter\ChapterRepositoryInterface;
@@ -21,7 +22,16 @@ class CategoryController extends Controller
 
     public function index(Request $request, $slug) {
         $category = $this->categoryRepository->getCategoryBySlug($slug);
-        $stories = $category->stories->where('status', '=', Story::STATUS_ACTIVE);
+        
+        // Kiểm tra nếu không tìm thấy category
+        if (!$category) {
+            abort(404, 'Thể loại không tồn tại');
+        }
+        if (!$category->stories) {
+            $stories = collect();
+        } else {
+            $stories = $category->stories->where('status', '=', Story::STATUS_ACTIVE);
+        }
 
         $setting = Helper::getSetting();
         $objectSEO = (object) [

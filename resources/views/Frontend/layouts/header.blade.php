@@ -168,7 +168,7 @@
                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                     @if(Auth::check())
                         @if(Auth::user()->hasRole('Admin')) 
-                            <a href="{{ route('admin.login') }}" class="btn btn-primary">Trang Admin</a>
+                            <a href="{{ route('admin.dashboard.index') }}" class="btn btn-primary">Trang Admin</a>
                         @endif
                         <a href="{{ route('admin.logout') }}" class="btn btn-secondary">Đăng xuất</a>
                         <a href="{{ route("profile") }}" class="btn btn-warning">Profile</a>
@@ -357,7 +357,7 @@
                     <class="btn-group" role="group" aria-label="Basic mixed styles example">
                     @if(Auth::check())
                         @if(Auth::user()->hasRole('Admin')) 
-                            <a href="{{ route('admin.login') }}" class="btn btn-primary">Admin</a>
+                            <a href="{{ route('admin.dashboard.index') }}" class="btn btn-primary">Admin</a>
                         @endif
                         <a href="{{ route('admin.logout') }}" class="btn btn-secondary">Đăng xuất</a>
                         <a href="{{ route("profile") }}" class="btn btn-warning">Profile</a><br>
