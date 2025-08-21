@@ -32,8 +32,12 @@ use App\Observers\SettingObserver;
 use App\Observers\BannedIpObserver;
 use App\Observers\StatusObserver;
 use App\Observers\LivechatObserver;
+use App\Observers\NotificationObserver;
+use App\Observers\UserTaggedObserver;
 
 use App\Models\User;
+use App\Models\Notification;
+use App\Models\UserTagged;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -56,6 +60,8 @@ class AppServiceProvider extends ServiceProvider
         Livechat::observe(LivechatObserver::class);
         Donation::observe(DonationObserver::class);
         User::observe(UserObserver::class);
+        Notification::observe(NotificationObserver::class);
+        UserTagged::observe(UserTaggedObserver::class);
         Category::observe(CategoryObserver::class);
         Setting::observe(SettingObserver::class);
         Banned_ip::observe(BannedIpObserver::class);
