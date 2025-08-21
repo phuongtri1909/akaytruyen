@@ -25,8 +25,15 @@ class RatingRepository extends BaseRepository implements RatingRepositoryInterfa
 
     public function getStories($arrStoryIds)
     {
-        return Story::query()->with(['categories'])->whereIn('id', $arrStoryIds)
-        ->orderByRaw('FIELD(id, ' . implode(',', $arrStoryIds) . ')')
-        ->get();
+        if (empty($arrStoryIds)) {
+            return collect();
+        }
+
+        return Story::query()
+            ->with(['categories', 'latestChapter'])
+            ->withCount('chapters')
+            ->whereIn('id', $arrStoryIds)
+            ->orderByRaw('FIELD(id, ' . implode(',', $arrStoryIds) . ')')
+            ->get();
     }
 }

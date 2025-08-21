@@ -4,7 +4,7 @@ namespace App\Repositories;
 abstract class BaseRepository implements BaseRepositoryInterface
 {
     /**
-     * @var $model \Illuminate\Database\Eloquent\Model
+     * @var \Illuminate\Database\Eloquent\Model
      */
     protected $model;
 
@@ -26,20 +26,20 @@ abstract class BaseRepository implements BaseRepositoryInterface
     public function all($with = null)
     {
         if ($with) {
-            return $this->model->with($with)->get();
+            return $this->model::with($with)->get();
         }
 
-        return $this->model->all();
+        return $this->model::all();
     }
 
     public function lists(array $with = [], array $args = [])
     {
-        return $this->model->with($with)->get();
+        return $this->model::with($with)->get();
     }
 
     public function paginate(int $limit, array $with = [], array $args = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->model->with($with)->paginate($limit);
+        return $this->model::with($with)->paginate($limit);
     }
 
     public function showOption($query, $showOption)
@@ -57,12 +57,12 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
     public function find(int $id, $with = [])
     {
-        return $this->model->with($with)->find($id);
+        return $this->model::with($with)->find($id);
     }
 
     public function findOrFail(int $id, $with = [])
     {
-        return $this->model->with($with)->findOrFail($id);
+        return $this->model::with($with)->findOrFail($id);
     }
 
     /**
@@ -71,7 +71,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function create(array $attributes = [])
     {
-        return $this->model->create($attributes);
+        return $this->model::create($attributes);
     }
 
     public function update(int $id, array $attributes = [])
@@ -88,7 +88,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
     public function updateArr(array $ids, array $attributes = [])
     {
-        $result = $this->model->whereIn('id', $ids);
+        $result = $this->model::whereIn('id', $ids);
         if ($result) {
             $result->update($attributes);
 
@@ -127,7 +127,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
     public function getByArrId($arrId, $with = [])
     {
-        return $this->model->with($with)->whereIn('id', $arrId)->get();
+        return $this->model::with($with)->whereIn('id', $arrId)->get();
     }
 
     public function getByRequest($with = [], $requestParams = [], $showOption = [])
@@ -138,27 +138,27 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
     public function max($column)
     {
-        return $this->model->max($column);
+        return $this->model::max($column);
     }
 
     public function min($column)
     {
-        return $this->model->min($column);
+        return $this->model::min($column);
     }
 
     public function findOrCreate($conditions, $attributes)
     {
-        $result = $this->model->where($conditions)->first();
+        $result = $this->model::where($conditions)->first();
 
         if ($result) {
             return $result;
         } else {
-            return $this->model->create($attributes);
+            return $this->model::create($attributes);
         }
     }
 
     public function createMany(array $sources = [])
     {
-        return $this->model->insert($sources);
+        return $this->model::insert($sources);
     }
 }

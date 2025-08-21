@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 use Artesaos\SEOTools\Facades\JsonLd;
 use Artesaos\SEOTools\Facades\JsonLdMulti;
@@ -268,9 +269,25 @@ class Helper
             'to'   => $arr[1] ?? null,
         ]);
     }
-    
+
     public static function getCategoies() {
-        return Category::query()->get();
+        static $categories = null;
+        if ($categories === null) {
+            $categories = Category::query()->get();
+        }
+        return $categories;
+    }
+
+    public static function getCachedCategories() {
+        return Cache::remember('app:categories', now()->addMinutes(10), function () {
+            return self::getCategoies();
+        });
+    }
+
+    public static function getCachedSetting() {
+        return Cache::remember('app:setting', now()->addMinutes(10), function () {
+            return self::getSetting();
+        });
     }
 
     static function setSEO($objectSEO)
@@ -325,7 +342,27 @@ class Helper
     }
 
     static function getSetting() {
-        $setting = Setting::query()->first();
+        static $setting = null;
+        if ($setting === null) {
+            $setting = Setting::query()->first();
+        }
         return $setting;
+    }
+
+    public static function parseLinks($text)
+    {
+        if (empty($text)) return '';
+
+        $text = e($text);
+        $text = preg_replace(
+            '/(https?:\/\/[^\s]+)/',
+            '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline hover:text-blue-700">$1</a>',
+            $text
+        );
+
+        $emojiPattern = '/[\x{1F000}-\x{1FFFF}|\x{2600}-\x{27BF}|\x{1F900}-\x{1F9FF}|\x{2B50}|\x{2705}]/u';
+        $text = preg_replace_callback($emojiPattern, fn($m) => '<span class="emoji">'.$m[0].'</span>', $text);
+
+        return nl2br('<span class="text">'.$text.'</span>');
     }
 }

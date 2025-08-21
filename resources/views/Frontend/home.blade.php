@@ -39,22 +39,16 @@
                         <br>
                         @include('Frontend.sections.main.list_category')
                     </div>
-
                 </div>
             </div>
             <br>
             @include('Frontend.sections.main.stories_full', ['stories' => $storiesFull])
-
         </div>
-
-
-
     </div>
     <div class="container mt-4">
         <div class="section-list-category bg-light p-2 rounded card-custom w-100" style="max-width: 1300px;">
             <div id="chat-box">
                 <h3 class="text-decoration-none text-dark">Luận Thiên Hạ</h3>
-                <!-- <small>Đang phát triển</small> -->
                 <livewire:comment-section />
             </div>
 

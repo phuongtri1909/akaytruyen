@@ -18,7 +18,7 @@ class RatingController extends Controller
         }
 
         $user = auth()->user();
-        
+
         if ($user->ban_rate) {
             return response()->json([
                 'status' => 'error',

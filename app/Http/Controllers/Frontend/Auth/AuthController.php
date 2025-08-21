@@ -73,7 +73,7 @@ class AuthController extends Controller
 
         return redirect()->back()->with('error', 'Dữ liệu không hợp lệ');
     }
-    
+
 
     public function login(Request $request)
     {

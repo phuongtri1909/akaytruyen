@@ -12,7 +12,10 @@ class Setting extends Model
 
     public static function getValue($key, $default = null)
     {
-        $setting = self::query()->first();
+        static $setting = null;
+        if ($setting === null) {
+            $setting = self::query()->first();
+        }
         return $setting ? $setting->$key : $default;
     }
 

@@ -4,9 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\LivechatReaction;
 use Livewire\Component;
-use App\Models\Comment;
 use App\Models\Livechat;
-use App\Models\Reaction;
 use Illuminate\Support\Facades\Auth;
 
 class CommentSection extends Component
@@ -17,6 +15,7 @@ class CommentSection extends Component
     public $hasMoreComments = true;
 
     protected $listeners = ['deleteComment', 'loadMoreOnScroll'];
+
     protected $rules = [
         'content' => 'required|min:1',
     ];
@@ -30,19 +29,16 @@ class CommentSection extends Component
     {
         $this->validate();
 
-        if (auth()->user()->ban_comment) {
-            session()->flash('error', 'Bạn đã bị cấm bình luận.');
-            return;
+        if (Auth::user()->ban_comment) {
+            return session()->flash('error', 'Bạn đã bị cấm bình luận.');
         }
 
-        Livechat::create([
-            'user_id' => Auth::id(),
-            'content' => trim($this->content),
-            'parent_id' => $this->parent_id
+        Auth::user()->comments()->create([
+            'content'   => trim($this->content),
+            'parent_id' => $this->parent_id,
         ]);
 
-        $this->content = '';
-        $this->parent_id = null;
+        $this->reset(['content', 'parent_id']);
 
         $this->dispatch('commentAdded');
         session()->flash('success', 'Bình luận đã được thêm.');
@@ -50,18 +46,14 @@ class CommentSection extends Component
 
     public function deleteComment($id)
     {
-        $comment = Livechat::find($id);
+        $comment = Livechat::with('replies')->find($id);
 
         if (!$comment) {
-            session()->flash('error', 'Bình luận không tồn tại.');
-            return;
+            return session()->flash('error', 'Bình luận không tồn tại.');
         }
 
-        if (
-            auth()->id() === $comment->user_id ||
-            auth()->user()->hasRole('Admin') ||
-            auth()->user()->hasRole('Mod')
-        ) {
+        $user = Auth::user();
+        if ($user->id === $comment->user_id || $user->hasAnyRole(['Admin','Mod'])) {
             $comment->replies()->delete();
             $comment->delete();
 
@@ -74,56 +66,41 @@ class CommentSection extends Component
 
     public function react($commentId, $type)
     {
-        if (!auth()->check()) {
-            return;
-        }
+        if (!Auth::check()) return;
 
         $reaction = LivechatReaction::where('user_id', Auth::id())
             ->where('comment_id', $commentId)
             ->first();
 
         if ($reaction) {
-            if ($reaction->type === $type) {
-                $reaction->delete();
-            } else {
-                $reaction->update(['type' => $type]);
-            }
+            $reaction->type === $type
+                ? $reaction->delete()
+                : $reaction->update(['type' => $type]);
         } else {
             LivechatReaction::create([
-                'user_id' => Auth::id(),
+                'user_id'    => Auth::id(),
                 'comment_id' => $commentId,
-                'type' => $type
+                'type'       => $type,
             ]);
         }
     }
 
     public function pinComment($commentId)
     {
-        if (!auth()->check() || !auth()->user()->hasRole(['Admin', 'Mod'])) {
-            return;
-        }
+        $user = Auth::user();
+        if (!$user || !$user->hasAnyRole(['Admin','Mod'])) return;
 
         $comment = Livechat::find($commentId);
-
-        if (!$comment || $comment->parent_id !== null) {
-            return;
-        }
+        if (!$comment || $comment->parent_id) return;
 
         if ($comment->pinned) {
             $comment->update(['pinned' => false]);
         } else {
-            $pinnedCount = Livechat::where('pinned', true)->count();
-
-            if ($pinnedCount >= 2) {
-                $oldestPinned = Livechat::where('pinned', true)
-                    ->orderBy('updated_at', 'asc')
-                    ->first();
-
-                if ($oldestPinned) {
-                    $oldestPinned->update(['pinned' => false]);
-                }
+            // chỉ cho phép tối đa 2 comment được pin
+            $pinned = Livechat::where('pinned', true)->orderBy('updated_at')->get();
+            if ($pinned->count() >= 2) {
+                $pinned->first()->update(['pinned' => false]);
             }
-
             $comment->update(['pinned' => true]);
         }
     }
@@ -149,19 +126,17 @@ class CommentSection extends Component
 
     public function render()
     {
-        $comments = Livechat::whereNull('parent_id')
+        $comments = Livechat::select('id','user_id','content','pinned','created_at','parent_id')
+            ->whereNull('parent_id')
             ->with([
-                'user' => function ($query) {
-                    $query->select('id', 'name', 'email', 'avatar', 'ban_comment');
-                },
+                'user:id,name,email,avatar,ban_comment',
                 'user.roles:id,name',
                 'replies' => function ($query) {
-                    $query->orderBy('created_at', 'asc')
+                    $query->select('id','user_id','content','parent_id','created_at')
+                        ->orderBy('created_at')
                         ->limit(5)
                         ->with([
-                            'user' => function ($subQuery) {
-                                $subQuery->select('id', 'name', 'email', 'avatar', 'ban_comment');
-                            },
+                            'user:id,name,email,avatar,ban_comment',
                             'user.roles:id,name'
                         ]);
                 }
@@ -179,12 +154,9 @@ class CommentSection extends Component
 
     public function parseLinks($text)
     {
-        if (empty($text)) {
-            return '';
-        }
+        if (empty($text)) return '';
 
         $text = e($text);
-
         $text = preg_replace(
             '/(https?:\/\/[^\s]+)/',
             '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline hover:text-blue-700">$1</a>',
@@ -192,12 +164,8 @@ class CommentSection extends Component
         );
 
         $emojiPattern = '/[\x{1F000}-\x{1FFFF}|\x{2600}-\x{27BF}|\x{1F900}-\x{1F9FF}|\x{2B50}|\x{2705}]/u';
-        $text = preg_replace_callback($emojiPattern, function ($matches) {
-            return '<span class="emoji">' . $matches[0] . '</span>';
-        }, $text);
+        $text = preg_replace_callback($emojiPattern, fn($m) => '<span class="emoji">'.$m[0].'</span>', $text);
 
-        $result = '<span class="text">' . $text . '</span>';
-
-        return nl2br($result);
+        return nl2br('<span class="text">'.$text.'</span>');
     }
 }

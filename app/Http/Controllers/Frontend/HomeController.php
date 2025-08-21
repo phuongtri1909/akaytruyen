@@ -8,6 +8,7 @@ use App\Models\Chapter;
 use App\Models\LiveComment;
 use App\Models\Story;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use App\Repositories\Category\CategoryRepositoryInterface;
 use App\Repositories\Chapter\ChapterRepositoryInterface;
 use App\Repositories\Story\StoryRepositoryInterface;
@@ -39,7 +40,8 @@ class HomeController extends Controller
 
         TwitterCard::setTitle('Trang chủ - Akay Truyện');
         TwitterCard::setSite('@AkayTruyen');
-        $setting = Helper::getSetting();
+
+        $setting = Helper::getCachedSetting();
 
         $objectSEO = (object) [
             'name' => $setting ? $setting->title : 'Akay Truyện',
@@ -48,68 +50,62 @@ class HomeController extends Controller
             'no_index' => $setting ? !$setting->index : env('NO_INDEX'),
             'meta_type' => 'WebPage',
             'url_canonical' => route('home'),
-            'image' => asset('assets/frontend/images/logo_text.png'),
+            'image' => asset('assets/frontend/images/logoakay.png'),
             'site_name' => 'Akay Truyện'
         ];
 
         Helper::setSEO($objectSEO);
 
-        $storiesHot = $this->storyRepository->getStoriesHot(16);
-        $storiesNewIds = $this->storyRepository->getStoriesNewIds()->toArray();
-        $storiesNew = $this->storyRepository->getStoriesNew($storiesNewIds);
-        $chapterLast = $this->chapterRepository->getChapterLast($storiesNewIds) ?? [];
+        $cacheTtl = now()->addMinutes(5);
 
-        $storiesFullIds = $this->storyRepository->getStoriesFullIds()->toArray();
-        $storiesFull = $this->storyRepository->getStoriesFull($storiesFullIds);
-        $chapterLastOffFull = $this->chapterRepository->getChapterLast($storiesFullIds);
-
-        $storiesNew->map(function ($story) use ($chapterLast) {
-            foreach ($chapterLast as $chapter) {
-                if ($chapter->story_id == $story->id) {
-                    return $story->chapter_last = $chapter;
-                }
-            }
+        $storiesHot = Cache::remember('home:stories_hot', $cacheTtl, function () {
+            return $this->storyRepository->getStoriesHot(16);
         });
 
-        $storiesFull->map(function ($story) use ($chapterLastOffFull) {
-            foreach ($chapterLastOffFull as $chapter) {
-                if ($chapter->story_id == $story->id) {
-                    return $story->chapter_last = $chapter;
-                }
-            }
+        $storiesNewIds = Cache::remember('home:stories_new_ids', $cacheTtl, function () {
+            return $this->storyRepository->getStoriesNewIds()->toArray();
+        });
+        $storiesNew = Cache::remember('home:stories_new', $cacheTtl, function () use ($storiesNewIds) {
+            return $this->storyRepository->getStoriesNew($storiesNewIds);
+        });
+
+        $storiesFullIds = Cache::remember('home:stories_full_ids', $cacheTtl, function () {
+            return $this->storyRepository->getStoriesFullIds()->toArray();
+        });
+        $storiesFull = Cache::remember('home:stories_full', $cacheTtl, function () use ($storiesFullIds) {
+            return $this->storyRepository->getStoriesFull($storiesFullIds);
+        });
+
+        // Map eager-loaded latestChapter to legacy chapter_last attribute for compatibility
+        $storiesNew->each(function ($story) {
+            $story->chapter_last = $story->latestChapter ?? null;
+        });
+
+        $storiesFull->each(function ($story) {
+            $story->chapter_last = $story->latestChapter ?? null;
         });
 
 
-        // Get pinned comments separately
-        $pinnedComments = LiveComment::with(['user', 'replies.user', 'reactions'])
-            ->whereNull('reply_id')
-            ->where('is_pinned', true)
-            ->latest()
-            ->get();
-
-        // Get regular comments with pagination
-        $regularComments = LiveComment::with(['user', 'replies.user', 'reactions'])
-            ->whereNull('reply_id')
-            ->where('is_pinned', false)  // Explicitly exclude pinned comments
-            ->latest()
-            ->paginate(10);
+        // Comments on home page are rendered via Livewire component now, so skip querying here
 
 
         // $categories = Helper::getCategoies();
-        $totalStory = Story::query()->count();
-        $totalChapter = Chapter::query()->count();
-        $totalViews = Chapter::query()->sum('views');
-        $totalRating = User::query()->sum('rating');
+        $totalStory = Cache::remember('stats:total_story', $cacheTtl, fn () => Story::query()->count());
+        $totalChapter = Cache::remember('stats:total_chapter', $cacheTtl, fn () => Chapter::query()->count());
+        $totalViews = Cache::remember('stats:total_views', $cacheTtl, fn () => Chapter::query()->sum('views'));
+        $totalRating = Cache::remember('stats:total_rating', $cacheTtl, fn () => User::query()->sum('rating'));
 
         $selectedMonth = $request->query('month', Carbon::now()->month);
         $selectedYear = $request->query('year', Carbon::now()->year);
 
         // Lấy danh sách các tháng có donate
-        $months = Donation::selectRaw('MONTH(donated_at) as month, YEAR(donated_at) as year')
-            ->groupBy('month', 'year')
-            ->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')
-            ->get();
+        $months = Cache::remember('donors:months', $cacheTtl, function () {
+            return Donation::selectRaw('MONTH(donated_at) as month, YEAR(donated_at) as year')
+                ->groupBy('month', 'year')
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc')
+                ->get();
+        });
 
         // Lấy danh sách donate theo tháng được chọn
         $usersDonate = User::where('donate_amount', '>', 0)
@@ -123,16 +119,16 @@ class HomeController extends Controller
             ->selectRaw("CAST(name AS CHAR CHARACTER SET utf8mb4) as name, amount as donate_amount, donated_at as updated_at");
 
         // Gộp hai danh sách lại và lấy toàn bộ dữ liệu
-        $topDonors = $usersDonate->union($guestDonate)
-            ->orderByDesc('donate_amount')
-            ->get();
+        $topDonors = Cache::remember("donors:top:{$selectedYear}-{$selectedMonth}", $cacheTtl, function () use ($usersDonate, $guestDonate) {
+            return $usersDonate->union($guestDonate)
+                ->orderByDesc('donate_amount')
+                ->get();
+        });
 
         return view('Frontend.home', compact(
             'storiesHot',
             'storiesNew',
             'storiesFull',
-            'pinnedComments',
-            'regularComments',
             'totalStory',
             'totalChapter',
             'totalViews',
@@ -152,7 +148,14 @@ class HomeController extends Controller
         // $category = $this->categoryRepository->find($categoryId, ['stories']);
 
         if ($categoryIdInput === 'all' || intval($categoryIdInput) === 0) {
-            $stories = Story::where('status', Story::STATUS_ACTIVE)->get();
+            $stories = Cache::remember('home:stories_hot:all', now()->addMinutes(5), function () {
+                return Story::with(['categories', 'latestChapter'])
+                    ->withCount('chapters')
+                    ->where('status', Story::STATUS_ACTIVE)
+                    ->limit(16)
+                    ->orderByDesc('updated_at')
+                    ->get();
+            });
             $categoryId = 0; // hoặc gán giá trị phù hợp cho giao diện
         } else {
             $categoryId = intval($categoryIdInput);
@@ -166,18 +169,23 @@ class HomeController extends Controller
             }
 
             // Nếu lấy theo danh mục thì giới hạn 16 story
-            $stories = $category->stories()
-                ->where('status', Story::STATUS_ACTIVE)
-                ->limit(16)
-                ->get();
+            $stories = Cache::remember("home:stories_hot:category:{$categoryId}", now()->addMinutes(5), function () use ($category) {
+                return $category->stories()
+                    ->with(['categories', 'latestChapter'])
+                    ->withCount('chapters')
+                    ->where('status', Story::STATUS_ACTIVE)
+                    ->limit(16)
+                    ->orderByDesc('updated_at')
+                    ->get();
+            });
         }
 
         $param = [
             'categoryIdSelected' => $categoryId,
-            'categories' => Helper::getCategoies(),
+            'categories' => Helper::getCachedCategories(),
             'storiesHot' => $stories
         ];
-        $html = view('Frontend.sections.main.stories_hot', $param)->toHtml();
+        $html = view('Frontend.sections.main.stories_hot', $param)->render();
 
         return response()->json([
             'success' => true,
@@ -193,11 +201,11 @@ class HomeController extends Controller
 
         $param = [
             'categoryIdSelected' => 0,
-            'categories' => Helper::getCategoies(),
+            'categories' => Helper::getCachedCategories(),
             'storiesHot' => $stories
         ];
 
-        $html = view('Frontend.sections.main.stories_hot', $param)->toHtml();
+        $html = view('Frontend.sections.main.stories_hot', $param)->render();
 
         $res['success'] = true;
         $res['html'] = $html;
@@ -229,18 +237,7 @@ class HomeController extends Controller
             }
         }
 
-        $chapterLast = [];
-
-        if ($storiesIds) {
-            $chapterLast = $this->chapterRepository->getChapterLast($storiesIds);
-            $stories->map(function ($story) use ($chapterLast) {
-                foreach ($chapterLast as $chapter) {
-                    if ($story->id == $chapter->story_id) {
-                        return $story->chapter_last = $chapter;
-                    }
-                }
-            });
-        }
+        // latestChapter is eager-loaded in repository and exposed via chapter_last accessor
 
         $data = [
             'stories' => $stories,

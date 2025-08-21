@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Story extends Model
 {
@@ -53,6 +54,23 @@ class Story extends Model
     public function chapters()
     {
         return $this->hasMany(Chapter::class, 'story_id');
+    }
+
+    /**
+     * Latest chapter relation for eager loading the newest chapter per story.
+     */
+    public function latestChapter()
+    {
+        return $this->hasOne(Chapter::class, 'story_id')->latestOfMany();
+    }
+
+    /**
+     * Accessor to keep backward-compatibility for `$story->chapter_last` in views.
+     * Returns the eager-loaded latestChapter relation if available.
+     */
+    public function getChapterLastAttribute()
+    {
+        return $this->getRelationValue('latestChapter');
     }
 
     /**

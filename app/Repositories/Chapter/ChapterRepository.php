@@ -19,18 +19,14 @@ class ChapterRepository extends BaseRepository implements ChapterRepositoryInter
 
     public function getChapterLast($storyIds)
     {
-        $chapter = Chapter::first();
         if (empty($storyIds)) {
             return collect(); // Trả về collection rỗng nếu không có story_id nào
         }
-        if ($chapter) {
-            return DB::table('chapters as c')
-                ->join(DB::raw('(SELECT MAX(id) AS max_id FROM chapters WHERE story_id IN (' . implode(',', $storyIds) . ') GROUP BY story_id) latest_chapters'), 'c.id', '=', 'latest_chapters.max_id')
-                ->select('c.*')
-                ->get();
-        } else {
-            return null;
-        }
+
+        return DB::table('chapters as c')
+            ->join(DB::raw('(SELECT story_id, MAX(id) AS max_id FROM chapters WHERE story_id IN (' . implode(',', $storyIds) . ') GROUP BY story_id) latest_chapters'), 'c.id', '=', 'latest_chapters.max_id')
+            ->select('c.*')
+            ->get();
     }
 
     public function getChaptersByStoryId($storyId, $isOldFirst = false)

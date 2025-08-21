@@ -5,6 +5,7 @@ namespace App\Http\ViewComposers;
 use App\Helpers\Helper;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Cache;
 
 class LayoutComposer
 {
@@ -14,7 +15,7 @@ class LayoutComposer
      *
      */
     public function __construct(
-        
+
     )
     {
     }
@@ -27,14 +28,14 @@ class LayoutComposer
      */
     public function compose($view)
     {
-        $categories = Helper::getCategoies();
+        $categories = Helper::getCachedCategories();
         $menu = [
             'the_loai' => $categories,
         ];
 
         $bgColorCookie = $_COOKIE['bg_color'] ?? '';
-        $setting = Helper::getSetting();
-        
+        $setting = Helper::getCachedSetting();
+
         $view->with([
             // 'categories'    => $categories,
             'bgColorCookie' => $bgColorCookie,

@@ -20,12 +20,26 @@ class StoryRepository extends BaseRepository implements StoryRepositoryInterface
 
     public function getStoriesActive()
     {
-        return $this->getModel()::query()->where('status', '=', Story::STATUS_ACTIVE)->get();
+        return $this->getModel()
+            ::query()
+            ->with(['categories', 'latestChapter'])
+            ->withCount('chapters')
+            ->where('status', '=', Story::STATUS_ACTIVE)
+            ->orderByDesc('updated_at')
+            ->get();
     }
 
     public function getStoriesHot($limit)
     {
-        return $this->getModel()::query()->where('status', '=', Story::STATUS_ACTIVE)->where('is_hot', '=', Story::IS_HOT)->limit($limit)->get();
+        return $this->getModel()
+            ::query()
+            ->with(['categories', 'latestChapter'])
+            ->withCount('chapters')
+            ->where('status', '=', Story::STATUS_ACTIVE)
+            ->where('is_hot', '=', Story::IS_HOT)
+            ->orderByDesc('updated_at')
+            ->limit($limit)
+            ->get();
     }
 
     public function getStoriesNewOld()
@@ -68,13 +82,14 @@ class StoryRepository extends BaseRepository implements StoryRepositoryInterface
 
         return $this->getModel()
             ->query()
-            ->with(['categories'])
+            ->with(['categories', 'latestChapter'])
+            ->withCount('chapters')
             ->whereIn('id', $ids)
             ->where('is_new', '=', Story::IS_NEW)
             // ->where('updated_at', '>=', $startDate)
             // ->where('updated_at', '<=', $now)
-            ->limit(20)
             ->orderBy('updated_at', 'desc')
+            ->limit(20)
             ->get();
     }
 
@@ -84,16 +99,19 @@ class StoryRepository extends BaseRepository implements StoryRepositoryInterface
             ->query()
             ->where('status', '=', Story::STATUS_ACTIVE)
             ->where('is_new', '=', Story::IS_NEW)
-            ->where('status', '=', Story::STATUS_ACTIVE)
             ->pluck('id');
     }
 
     public function getStoriesFull($ids)
     {
         return $this->getModel()
+            ->query()
+            ->with(['categories', 'latestChapter'])
+            ->withCount('chapters')
             ->where('is_full', '=', Story::FULL)
             ->whereIn('id', $ids)
             ->where('status', '=', Story::STATUS_ACTIVE)
+            ->orderByDesc('updated_at')
             ->get();
     }
 
@@ -108,10 +126,11 @@ class StoryRepository extends BaseRepository implements StoryRepositoryInterface
 
     public function getStoryBySlug($slug, $with = [])
     {
+        $relations = array_values(array_unique(array_merge($with, ['latestChapter'])));
+
         return $this->getModel()
             ->query()
-            // ->with(['categories', 'author', 'author.stories'])
-            ->with($with)
+            ->with($relations)
             ->where('slug', '=', $slug)
             ->where('status', '=', Story::STATUS_ACTIVE)
             ->first();
@@ -120,16 +139,36 @@ class StoryRepository extends BaseRepository implements StoryRepositoryInterface
     public function getStoriesHotRandom($limit)
     {
         return $this->getModel()
-            ->query()->inRandomOrder()->where('status', '=', Story::STATUS_ACTIVE)->where('is_hot', '=', Story::IS_HOT)->limit($limit)->get();
+            ->query()
+            ->with(['categories', 'latestChapter'])
+            ->withCount('chapters')
+            ->inRandomOrder()
+            ->where('status', '=', Story::STATUS_ACTIVE)
+            ->where('is_hot', '=', Story::IS_HOT)
+            ->limit($limit)
+            ->get();
     }
 
     public function getStoryWithByKeyWord($keyWord)
     {
-        return $this->getModel()->query()->with(['author'])->where('name', 'LIKE', '%' . $keyWord . '%')->get();
+        return $this->getModel()
+            ->query()
+            ->with(['author', 'latestChapter'])
+            ->withCount('chapters')
+            ->where('name', 'LIKE', '%' . $keyWord . '%')
+            ->get();
     }
 
     public function getStoriesWithChaptersCount($value)
     {
-        return $this->getModel()->query()->where('status', '=', Story::STATUS_ACTIVE)->withCount('chapters')->has('chapters', '>=', $value[0])->has('chapters', '<=', $value[1])->get();
+        return $this->getModel()
+            ::query()
+            ->with(['categories', 'latestChapter'])
+            ->withCount('chapters')
+            ->where('status', '=', Story::STATUS_ACTIVE)
+            ->having('chapters_count', '>=', $value[0])
+            ->having('chapters_count', '<=', $value[1])
+            ->orderByDesc('updated_at')
+            ->get();
     }
 }
