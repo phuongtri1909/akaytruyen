@@ -6,6 +6,8 @@ use App\Models\LivechatReaction;
 use Livewire\Component;
 use App\Models\Livechat;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class CommentSection extends Component
 {
@@ -33,12 +35,17 @@ class CommentSection extends Component
             return session()->flash('error', 'Bạn đã bị cấm bình luận.');
         }
 
-        Auth::user()->comments()->create([
-            'content'   => trim($this->content),
+        // Tạo comment mới
+        $comment = Livechat::create([
+            'user_id' => Auth::id(),
+            'content' => trim($this->content),
             'parent_id' => $this->parent_id,
         ]);
 
         $this->reset(['content', 'parent_id']);
+
+        // Clear cache khi có comment mới
+        $this->clearCommentCache();
 
         $this->dispatch('commentAdded');
         session()->flash('success', 'Bình luận đã được thêm.');
@@ -57,6 +64,9 @@ class CommentSection extends Component
             $comment->replies()->delete();
             $comment->delete();
 
+            // Clear cache khi xóa comment
+            $this->clearCommentCache();
+
             $this->dispatch('deleteSuccess');
             session()->flash('delete_success', 'Xóa thành công');
         } else {
@@ -68,21 +78,8 @@ class CommentSection extends Component
     {
         if (!Auth::check()) return;
 
-        $reaction = LivechatReaction::where('user_id', Auth::id())
-            ->where('comment_id', $commentId)
-            ->first();
-
-        if ($reaction) {
-            $reaction->type === $type
-                ? $reaction->delete()
-                : $reaction->update(['type' => $type]);
-        } else {
-            LivechatReaction::create([
-                'user_id'    => Auth::id(),
-                'comment_id' => $commentId,
-                'type'       => $type,
-            ]);
-        }
+        // Sử dụng method đã tối ưu từ model
+        LivechatReaction::toggleReaction(Auth::id(), $commentId, $type);
     }
 
     public function pinComment($commentId)
@@ -103,6 +100,9 @@ class CommentSection extends Component
             }
             $comment->update(['pinned' => true]);
         }
+
+        // Clear cache khi thay đổi pin status
+        $this->clearCommentCache();
     }
 
     public function loadMoreComments()
@@ -120,36 +120,38 @@ class CommentSection extends Component
 
     private function checkHasMoreComments()
     {
-        $totalComments = Livechat::whereNull('parent_id')->count();
+        // Sử dụng cache cho comment count từ model
+        $totalComments = Livechat::getCachedMainCommentCount();
+
         $this->hasMoreComments = $this->loadedComments < $totalComments;
     }
 
     public function render()
     {
-        $comments = Livechat::select('id','user_id','content','pinned','created_at','parent_id')
-            ->whereNull('parent_id')
-            ->with([
-                'user:id,name,email,avatar,ban_comment',
-                'user.roles:id,name',
-                'replies' => function ($query) {
-                    $query->select('id','user_id','content','parent_id','created_at')
-                        ->orderBy('created_at')
-                        ->limit(5)
-                        ->with([
-                            'user:id,name,email,avatar,ban_comment',
-                            'user.roles:id,name'
-                        ]);
-                }
-            ])
-            ->orderByDesc('pinned')
-            ->orderByDesc('created_at')
-            ->limit($this->loadedComments)
-            ->get();
+        // Sử dụng method đã tối ưu từ model
+        $comments = Livechat::getCachedComments($this->loadedComments);
 
         return view('Frontend.livewire.comment-section', [
             'comments' => $comments,
             'hasMoreComments' => $this->hasMoreComments
         ]);
+    }
+
+    /**
+     * Clear tất cả cache liên quan đến comments
+     */
+    private function clearCommentCache()
+    {
+        // Clear comment count cache
+        Cache::forget('total_main_comments');
+
+        // Clear tất cả comment page cache
+        for ($i = 10; $i <= 100; $i += 10) {
+            Cache::forget("comments_page_{$i}");
+        }
+
+        // Clear user cache nếu cần
+        Cache::forget('users_with_roles');
     }
 
     public function parseLinks($text)

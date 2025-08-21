@@ -7,14 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-        Schema::create('messages', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->text('message');
-            $table->timestamps();
+        if (!Schema::hasTable('messages')) {
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+            Schema::create('messages', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('user_id');
+                $table->text('message');
+                $table->timestamps();
+
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
+
     }
 
     public function down()
