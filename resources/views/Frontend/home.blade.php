@@ -46,9 +46,17 @@
         </div>
     </div>
     <div class="container mt-4">
-        <div class="section-list-category bg-light p-2 rounded card-custom w-100" style="max-width: 1300px;">
+        <div class="section-list-category card-custom w-100" style="max-width: 1300px;">
             <div id="chat-box">
-                <h3 class="text-decoration-none text-dark">Luận Thiên Hạ</h3>
+                <div class="scroll-title-stories">
+                    <h2 class="ancient-title-stories">
+                        <span class="title-text-stories">Luận Thiên Hạ</span>
+                        <div class="title-decoration-stories">
+                            <span class="decoration-line-stories left"></span>
+                            <span class="decoration-line-stories right"></span>
+                        </div>
+                    </h2>
+                </div>
                 <livewire:comment-section />
             </div>
 
