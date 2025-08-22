@@ -4,17 +4,23 @@
             'title' => 'Truyện Mới',
             'showIcon' => false,
             'showSelect' => false,
-            'selectOptions' => []
+            'selectOptions' => [],
         ])
     </div>
 
     <div class="row">
         <div class="col-12">
-            <div class="section-stories-new__list">
-                @foreach ($storiesNew as $story)
-                    @include('Frontend.snippets.story_item_no_image', ['story' => $story])
-                @endforeach
+            <div id="list-index">
+                <div class="list list-truyen list-new">
+                    @foreach ($storiesNew as $story)
+                        @include('Frontend.snippets.story_item_no_image', ['story' => $story])
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/stories_new.styles.css') }}">
+@endpush

@@ -3,7 +3,6 @@
         <div class="story-item__image story-item__image--framed">
             <img src="{{ asset($story->image) }}" alt="{{ $story->name }}" class="img-fluid story-cover" width="150" height="230"
                 loading='lazy'>
-            <img src="{{ asset('assets/frontend/images/frame-gold.png') }}" alt="Khung" class="story-frame" loading='lazy' aria-hidden="true">
         </div>
         <h3 class="story-item__name text-one-row story-name">{{ $story->name }}</h3>
 

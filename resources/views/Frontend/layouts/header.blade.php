@@ -1,5 +1,5 @@
 <header class="header d-none d-lg-block">
-    <nav class="navbar navbar-expand-lg navbar-dark header__navbar p-md-0">
+    <nav class="navbar navbar-expand-lg header__navbar p-md-0 header-custom">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
                 <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="Logo Suu Truyen" srcset=""
@@ -13,8 +13,8 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Thể loại
                         </a>
                         <ul class="dropdown-menu dropdown-menu-custom">
@@ -26,9 +26,9 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Theo số chương
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Theo chương
                         </a>
                         <ul class="dropdown-menu dropdown-menu-custom">
                             <li><a class="dropdown-item"
@@ -148,69 +148,36 @@
                 </form>
 
             </div>
-
-        </div>
-        <div class="customer-account me-2">
-            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <div class="auth-buttons" role="group" aria-label="Authentication buttons">
                 @if (Auth::check())
                     @if (Auth::user()->hasRole('Admin'))
-                        <a href="{{ route('admin.dashboard.index') }}" class="btn btn-primary">Trang Admin</a>
+                        <a href="{{ route('admin.dashboard.index') }}" class="auth-btn auth-btn--admin">
+                            <span class="auth-btn__icon">👑</span>
+                            <span class="auth-btn__text">Admin</span>
+                        </a>
                     @endif
-                    <a href="{{ route('admin.logout') }}" class="btn btn-secondary">Đăng xuất</a>
-                    <a href="{{ route('profile') }}" class="btn btn-warning">Profile</a>
+                    <a href="{{ route('admin.logout') }}" class="auth-btn auth-btn--logout">
+                        <span class="auth-btn__icon">🚪</span>
+                        <span class="auth-btn__text text-white">Đăng xuất</span>
+                    </a>
+                    <a href="{{ route('profile') }}" class="auth-btn auth-btn--profile">
+                        <span class="auth-btn__icon">👤</span>
+                        <span class="auth-btn__text text-white"></span>
+                    </a>
                 @else
-                    <a href="{{ route('register') }}" class="btn btn-secondary">Đăng ký</a>
-                    <a href="{{ route('login') }}" class="btn btn-warning">Đăng nhập</a>
+                    <a href="{{ route('register') }}" class="auth-btn auth-btn--register">
+                        <span class="auth-btn__icon">📝</span>
+                        <span class="auth-btn__text text-white">Đăng ký</span>
+                    </a>
+                    <a href="{{ route('login') }}" class="auth-btn auth-btn--login">
+                        <span class="auth-btn__icon">🔑</span>
+                        <span class="auth-btn__text text-white">Đăng nhập</span>
+                    </a>
                 @endif
-
             </div>
         </div>
+
     </nav>
-
-
-    <style>
-        .search-story {
-            margin: 3px;
-        }
-
-        /* Wuxia search box */
-        .wuxia-search {
-            position: relative;
-        }
-
-        .wuxia-search__input {
-            border-radius: 12px 0 0 12px;
-            border: 1px solid #caa83b;
-            background:
-                linear-gradient(180deg, #fbf6e6 0%, #efe4c9 100%),
-                repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4);
-        }
-
-        .wuxia-search__input::placeholder {
-            color: #7a5c2f;
-        }
-
-        .wuxia-search__submit {
-            border-radius: 0 12px 12px 0;
-            border: 1px solid #caa83b;
-            border-left: 0;
-            background: radial-gradient(circle at 30% 30%, #ffe8a6, #d4af37 70%);
-            color: #4c380b;
-        }
-
-        .dark-theme .wuxia-search__input {
-            background: linear-gradient(180deg, #2c2a26 0%, #24221f 100%);
-            color: #fff;
-            border-color: rgba(212, 175, 55, .35);
-        }
-
-        .dark-theme .wuxia-search__submit {
-            background: radial-gradient(circle at 30% 30%, #a58a36, #6b5a22 70%);
-            color: #fff;
-            border-color: rgba(212, 175, 55, .35);
-        }
-    </style>
 </header>
 
 <div class="header-mobile d-sm-block d-lg-none">
@@ -253,7 +220,7 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                            <a class="nav-link dropdown-toggle text-white" href="#" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 Thể loại
                             </a>
@@ -324,7 +291,7 @@
                                 $valueDefault = request()->input('key_word');
                             }
                         @endphp
-                        <input class="form-control search-story wuxia-search__input" type="text"
+                        <input class="form-control search-story wuxia-search__input ms-0" type="text"
                             placeholder="Tìm kiếm kiếm hiệp..." name="key_word" value="{{ $valueDefault }}">
                         <div class="col-12 search-result shadow no-result d-none">
                             <div class="card text-white bg-light">
@@ -345,18 +312,32 @@
                             </svg>
                         </button>
                     </form>
-                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                    <div class="auth-buttons" role="group" aria-label="Authentication buttons">
                         @if (Auth::check())
                             @if (Auth::user()->hasRole('Admin'))
-                                <a href="{{ route('admin.dashboard.index') }}" class="btn btn-primary">Admin</a>
+                                <a href="{{ route('admin.dashboard.index') }}" class="auth-btn auth-btn--admin">
+                                    <span class="auth-btn__icon">👑</span>
+                                    <span class="auth-btn__text text-white">Admin</span>
+                                </a>
                             @endif
-                            <a href="{{ route('admin.logout') }}" class="btn btn-secondary">Đăng xuất</a>
-                            <a href="{{ route('profile') }}" class="btn btn-warning">Profile</a><br>
+                            <a href="{{ route('admin.logout') }}" class="auth-btn auth-btn--logout">
+                                <span class="auth-btn__icon">🚪</span>
+                                <span class="auth-btn__text text-white">Đăng xuất</span>
+                            </a>
+                            <a href="{{ route('profile') }}" class="auth-btn auth-btn--profile">
+                                <span class="auth-btn__icon">👤</span>
+                                <span class="auth-btn__text text-white">Profile</span>
+                            </a>
                         @else
-                            <a href="{{ route('register') }}" class="btn btn-secondary">Đăng ký</a>
-                            <a href="{{ route('login') }}" class="btn btn-warning">Đăng nhập</a><br>
+                            <a href="{{ route('register') }}" class="auth-btn auth-btn--register">
+                                <span class="auth-btn__icon">📝</span>
+                                <span class="auth-btn__text text-white">Đăng ký</span>
+                            </a>
+                            <a href="{{ route('login') }}" class="auth-btn auth-btn--login">
+                                <span class="auth-btn__icon">🔑</span>
+                                <span class="auth-btn__text text-white">Đăng nhập</span>
+                            </a>
                         @endif
-
                     </div>
                 </div>
 
@@ -532,3 +513,188 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('assets/frontend/css/styles.css') }}">
+
+<style>
+    .header-custom {
+        background-color: #14425d;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-custom .text-white:hover {
+        color: #caa83b !important;
+    }
+
+    .header-custom .text-white:focus {
+        color: #caa83b !important;
+    }
+
+    .search-story {
+        margin: 3px;
+    }
+
+    /* Wuxia search box */
+    .wuxia-search {
+        position: relative;
+    }
+
+    .wuxia-search__input {
+        border-radius: 12px;
+        border: 1px solid #caa83b;
+        background:
+            linear-gradient(180deg, #fbf6e6 0%, #efe4c9 100%),
+            repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4);
+    }
+
+    .wuxia-search__input::placeholder {
+        color: #7a5c2f;
+    }
+
+    .wuxia-search__submit {
+        border-radius: 0 12px 12px 0;
+        border: 1px solid #caa83b;
+        border-left: 0;
+        background: radial-gradient(circle at 30% 30%, #ffe8a6, #d4af37 70%);
+        color: #4c380b;
+    }
+
+    .dark-theme .wuxia-search__input {
+        background: linear-gradient(180deg, #2c2a26 0%, #24221f 100%);
+        color: #fff;
+        border-color: rgba(212, 175, 55, .35);
+    }
+
+    .dark-theme .wuxia-search__submit {
+        background: radial-gradient(circle at 30% 30%, #a58a36, #6b5a22 70%);
+        color: #fff;
+        border-color: rgba(212, 175, 55, .35);
+    }
+
+    .auth-buttons {
+        margin-left: 6px;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    }
+
+    .auth-btn {
+        align-items: center;
+        gap: 4px;
+        padding: 6px 10px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 12px;
+        text-decoration: none;
+        color: #333;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        min-width: 0;
+        flex-shrink: 0;
+    }
+
+    .auth-btn:hover {
+        background: #f8f9fa;
+        border-color: #adb5bd;
+        color: #495057;
+    }
+
+    .auth-btn__icon {
+        font-size: 14px;
+    }
+
+    .auth-btn__text {
+        font-size: 12px;
+    }
+
+    /* Button Variants - Simple colors */
+    .auth-btn--admin {
+        background: #6c757d;
+        color: #fff;
+        border-color: #6c757d;
+    }
+
+    .auth-btn--admin:hover {
+        background: #5a6268;
+        border-color: #5a6268;
+    }
+
+    .auth-btn--logout {
+        background: #dc3545;
+        color: #fff;
+        border-color: #dc3545;
+    }
+
+    .auth-btn--logout:hover {
+        background: #c82333;
+        border-color: #c82333;
+    }
+
+    .auth-btn--profile {
+        background: #17a2b8;
+        color: #fff;
+        border-color: #17a2b8;
+    }
+
+    .auth-btn--profile:hover {
+        background: #138496;
+        border-color: #138496;
+    }
+
+    .auth-btn--register {
+        background: #28a745;
+        color: #fff;
+        border-color: #28a745;
+    }
+
+    .auth-btn--register:hover {
+        background: #218838;
+        border-color: #218838;
+    }
+
+    .auth-btn--login {
+        background: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+
+    .auth-btn--login:hover {
+        background: #0056b3;
+        border-color: #0056b3;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .auth-buttons {
+            margin-left: 0;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .auth-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .auth-btn__text {
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .auth-buttons {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .auth-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 8px 12px;
+        }
+    }
+</style>

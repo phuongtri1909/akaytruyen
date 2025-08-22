@@ -8,42 +8,47 @@
         <div class="row g-2 mt-2">
             <!-- Cột chứa THỐNG KÊ và ĐÁNH GIÁ -->
             <div class="col-12 col-lg-6 d-flex gap-3 flex-column" style="margin-top: 4.5rem !important;">
-                <div class="info-card h-30">
-                    <h6 class="info-title text-dark">THỐNG KÊ</h6>
-                    <div class="stats-list">
-                        <div class="stat-item text-dark">
-                            <i class="fas fa-bookmark text-danger"></i>
-                            <span class="counter" data-target="">{{ $totalStory }}</span>
-                            <span>Truyện</span>
+                <div class="compact-stats">
+                    <div class="stats-title">Thống Kê</div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <i class="fas fa-book-open"></i>
+                            <span class="stat-number counter" data-target="{{ $totalStory }}">0</span>
+                            <span class="stat-label">Truyện</span>
                         </div>
-                        <div class="stat-item text-dark">
-                            <i class="fas fa-bookmark text-danger"></i>
-                            <span class="counter" data-target="">{{ $totalChapter }}</span>
-                            <span>Chương</span>
+                        <div class="stat-item">
+                            <i class="fas fa-list-ol"></i>
+                            <span class="stat-number counter" data-target="{{ $totalChapter }}">0</span>
+                            <span class="stat-label">Chương</span>
                         </div>
-                        <div class="stat-item text-dark">
-                            <i class="fas fa-eye text-success"></i>
-                            <span class="counter" data-target="">{{ $totalViews }}</span>
-                            <span>Lượt Xem</span>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <i class="fas fa-eye"></i>
+                            <span class="stat-number counter" data-target="{{ $totalViews }}">0</span>
+                            <span class="stat-label">Lượt Xem</span>
                         </div>
-                        <div class="stat-item text-dark">
-                            <i class="fas fa-star text-warning"></i>
-                            <span class="counter" data-target="">{{ $totalRating }}</span>
-                            <span>({{ number_format($rating, 1) }}/5) Đánh giá</span>
+                        <div class="stat-item">
+                            <i class="fas fa-star"></i>
+                            <span class="stat-number counter" data-target="{{ $totalRating }}">0</span>
+                            <span class="stat-label">Đánh Giá</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="info-card mt-2">
-                    <h6 class="info-title text-dark">ĐÁNH GIÁ</h6>
-                    <div class="rating">
-                        <div class="stars" id="rating-stars">
+                <div class="compact-rating">
+                    <div class="rating-title">⭐ Đánh Giá</div>
+                    <div class="rating-content">
+                        <div class="stars-line">
                             @for ($i = 1; $i <= 5; $i++)
-                                <i class="fas fa-star {{ $i <= $fullStars ? 'full' : 'empty' }}"
+                                <i class="fas fa-star star {{ $i <= $fullStars ? 'filled' : 'empty' }}"
                                     data-rating="{{ $i }}"></i>
                             @endfor
+                            <span class="rating-score">{{ number_format($rating, 1) }}/5</span>
                         </div>
-                        <div class="rating-number mt-2">{{ number_format($rating, 1) }}/5</div>
+                        <div class="rating-bar">
+                            <div class="bar-fill" style="width: {{ ($rating / 5) * 100 }}%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -310,14 +315,227 @@
             font-weight: bold;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
+
+        /* Compact Stats Design */
+        .compact-stats {
+            background: #ffffff;
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .compact-stats .stats-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .stats-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: radial-gradient(circle at 30% 30%, #ffe8a6, #d4af37 70%);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stat-item:hover::before {
+            left: 100%;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .stat-item i {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 900;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Compact Rating Design */
+        .compact-rating {
+            background: #ffffff;
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .compact-rating .rating-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+        }
+
+        .rating-content {
+            text-align: center;
+        }
+
+        .stars-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .star {
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .star.filled {
+            color: #d4af37;
+        }
+
+        .star.empty {
+            color: #ddd;
+        }
+
+        .star:hover {
+            transform: scale(1.1);
+            color: #d4af37;
+        }
+
+        .rating-score {
+            margin-left: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .rating-bar {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, #ffe8a6, #d4af37 70%);
+            border-radius: 3px;
+            transition: width 1.5s ease;
+        }
+
+        /* Counter Animation */
+        .counter {
+            display: inline-block;
+            animation: countUp 2s ease-out forwards;
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .stats-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stat-item {
+                padding: 12px;
+            }
+
+            .stat-number {
+                font-size: 20px;
+            }
+
+            .stars-line {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .rating-score {
+                margin-left: 0;
+            }
+
+            .star {
+                font-size: 18px;
+            }
+        }
+
+        /* AOS Animation Overrides */
+        [data-aos="fade-up"] {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        [data-aos="fade-up"].aos-animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Hover effect
-            $('.stars i').hover(
+            $('.star').hover(
                 function() {
                     let rating = $(this).data('rating');
                     highlightStars(rating);
@@ -329,7 +547,7 @@
             );
 
             // Click handler
-            $('.stars i').click(function() {
+            $('.star').click(function() {
                 @if (!auth()->check())
                     window.location.href = '{{ route('login') }}';
                     return;
@@ -348,94 +566,33 @@
 
                         if (res.status === 'success') {
                             highlightStars(rating);
-                            $('.rating-number').text(rating + '/5');
-                            showToast(res.message, 'success');
+                            $('.rating-score').text(rating + '/5');
                         }
                     },
                     error: function(xhr) {
                         console.log(xhr);
-
-                        showToast(xhr.responseJSON.message || 'Có lỗi xảy ra', 'error');
                     }
                 });
             });
 
             function highlightStars(rating) {
-                $('.stars i').each(function(index) {
+                $('.star').each(function(index) {
                     if (index < rating) {
-                        $(this).removeClass('empty').addClass('full');
+                        $(this).removeClass('empty').addClass('filled');
                     } else {
-                        $(this).removeClass('full').addClass('empty');
+                        $(this).removeClass('filled').addClass('empty');
                     }
                 });
             }
         });
 
-
-        $(document).ready(function() {
-            // Hover effect
-            $('.stars i').hover(
-                function() {
-                    let rating = $(this).data('rating');
-                    highlightStars(rating);
-                },
-                function() {
-                    let currentRating = {{ $rating }};
-                    highlightStars(currentRating);
-                }
-            );
-
-            // Click handler
-            $('.stars i').click(function() {
-                @if (!auth()->check())
-                    window.location.href = '{{ route('login') }}';
-                    return;
-                @endif
-
-                let rating = $(this).data('rating');
-
-                $.ajax({
-
-                    type: 'POST',
-                    data: {
-                        rating: rating,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(res) {
-
-                        if (res.status === 'success') {
-                            highlightStars(rating);
-                            $('.rating-number').text(rating + '/5');
-                            showToast(res.message, 'success');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.log(xhr);
-
-                        showToast(xhr.responseJSON.message || 'Có lỗi xảy ra', 'error');
-                    }
-                });
-            });
-
-            function highlightStars(rating) {
-                $('.stars i').each(function(index) {
-                    if (index < rating) {
-                        $(this).removeClass('empty').addClass('full');
-                    } else {
-                        $(this).removeClass('full').addClass('empty');
-                    }
-                });
-            }
-        });
-    </script>
-    <script>
         document.addEventListener("DOMContentLoaded", function() {
             const container = document.getElementById("monthScrollContainer");
             const btnPrev = document.getElementById("btnPrevMonth");
             const btnNext = document.getElementById("btnNextMonth");
             const items = document.querySelectorAll(".month-item");
-            const itemWidth = items.length > 0 ? items[0].offsetWidth : 0; // Lấy chiều rộng 1 item
-            const visibleCount = 12; // Số lượng tháng hiển thị cùng lúc
+            const itemWidth = items.length > 0 ? items[0].offsetWidth : 0;
+            const visibleCount = 12;
             let scrollPosition = 0;
 
             function updateButtons() {
@@ -463,7 +620,114 @@
                 updateButtons();
             });
 
-            updateButtons(); // Kiểm tra nút khi trang load
+            updateButtons();
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const counters = document.querySelectorAll('.counter');
+
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const increment = target / (duration / 16); // 60fps
+                let current = 0;
+
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+
+                // Start animation when element is in view
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            updateCounter();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+
+                observer.observe(counter);
+            });
+        });
+
+        // Star Rating Interaction
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star');
+
+            stars.forEach(star => {
+                star.addEventListener('mouseenter', function() {
+                    const rating = this.getAttribute('data-rating');
+                    highlightStars(rating);
+                });
+
+                star.addEventListener('mouseleave', function() {
+                    resetStars();
+                });
+
+                star.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-rating');
+                    setRating(rating);
+                });
+            });
+
+            function highlightStars(rating) {
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('filled');
+                        star.classList.remove('empty');
+                    } else {
+                        star.classList.remove('filled');
+                        star.classList.add('empty');
+                    }
+                });
+            }
+
+            function resetStars() {
+                // Reset to original state based on current rating
+                const currentRating = {{ $fullStars }};
+                stars.forEach((star, index) => {
+                    if (index < currentRating) {
+                        star.classList.add('filled');
+                        star.classList.remove('empty');
+                    } else {
+                        star.classList.remove('filled');
+                        star.classList.add('empty');
+                    }
+                });
+            }
+
+            function setRating(rating) {
+
+                const ratingScore = document.querySelector('.rating-score');
+                if (ratingScore) {
+                    ratingScore.textContent = rating + '/5';
+                }
+
+                // Update the progress bar
+                const progressBar = document.querySelector('.bar-fill');
+                if (progressBar) {
+                    const percentage = (rating / 5) * 100;
+                    progressBar.style.width = percentage + '%';
+                }
+
+                // Visual feedback for stars
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('filled');
+                        star.classList.remove('empty');
+                    } else {
+                        star.classList.remove('filled');
+                        star.classList.add('empty');
+                    }
+                });
+            }
         });
     </script>
 @endpush

@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="mb-3 container py-2 d-flex flex-column justify-content-center text-start wuxia-banner" style="min-height: 50px;">
-        <p class="mb-0 text-center" style="font-size: 14px;">
+        <p class="mb-0 text-start text-md-center" style="font-size: 14px;">
             Akaytruyen.com là web đọc truyện chính chủ duy nhất của tác giả AkayHau. <br>
             Tham gia kênh Youtube và Facebook Page chính của truyện để ủng hộ tác giả.
         </p>
@@ -182,6 +182,12 @@
         @media (max-width: 768px) {
             .section-list-category {
                 padding: 1rem;
+            }
+
+            /* Fix banner tràn width trên mobile */
+            .wuxia-banner::before,
+            .wuxia-banner::after {
+                display: none;
             }
         }
 

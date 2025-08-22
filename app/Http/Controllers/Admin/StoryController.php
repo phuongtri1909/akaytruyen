@@ -53,7 +53,6 @@ class StoryController extends Controller
 
     public function store(StoryRequest $request)
     {
-        dd($request->all());
         $attributes = $request->all();
         $slug = Str::slug($request->input('name'));
 
