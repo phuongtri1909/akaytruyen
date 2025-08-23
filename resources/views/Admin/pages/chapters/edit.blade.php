@@ -14,6 +14,7 @@
                 @csrf
                 @if ($chapter && $chapter->id)
                     @method('put')
+                    <input type="hidden" name="story_id" value="{{ $story->id }}">
                 @else
                     @method('post')
                     <input type="hidden" name="story_id" value="{{ $story->id }}">

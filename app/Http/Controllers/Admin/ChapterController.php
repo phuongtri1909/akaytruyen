@@ -105,6 +105,12 @@ class ChapterController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Get the chapter first to ensure story_id exists
+        $chapter = $this->repository->find($id);
+        if (!$chapter) {
+            return redirect()->back()->withErrors(['error' => 'Chapter không tồn tại']);
+        }
+
         // Validate input data
         $request->validate([
             'chapter' => 'required|integer|min:1',
