@@ -1,10 +1,7 @@
 <div class="modern-comment-section">
     @auth
         <div class="comment-input-card">
-            <div class="comment-input-header">
-                <i class="fas fa-comments"></i>
-                <span>Chia sẻ suy nghĩ của bạn</span>
-            </div>
+           
             <div class="comment-input-body">
                 @include('Frontend.components.user-avatar', ['user' => auth()->user()])
 
@@ -92,18 +89,18 @@
 
             /* Comment Input Card */
             .comment-input-card {
-                background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+                background: linear-gradient(135deg, #329cda 0%, #14425d 100%);
                 border-radius: 20px;
                 padding: 0;
                 margin-bottom: 30px;
-                box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+                box-shadow: 0 20px 40px #329cda;
                 overflow: hidden;
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             }
 
             .comment-input-card:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 30px 60px rgba(212, 175, 55, 0.3);
+                box-shadow: 0 30px 60px #329cda;
             }
 
             .comment-input-header {
@@ -152,8 +149,8 @@
 
             .modern-textarea:focus {
                 outline: none;
-                border-color: #d4af37;
-                box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+                border-color: #329cda;
+                box-shadow: 0 0 0 3px #329cda;
                 transform: scale(1.02);
             }
 
@@ -176,7 +173,7 @@
             }
 
             .modern-submit-btn {
-                background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+                background: linear-gradient(135deg, #329cda 0%, #14425d 100%);
                 color: white;
                 border: none;
                 border-radius: 25px;
@@ -209,7 +206,7 @@
 
             .modern-submit-btn:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+                box-shadow: 0 10px 25px #329cda;
             }
 
             .modern-submit-btn:disabled {
@@ -236,7 +233,7 @@
                 overflow-y: auto;
                 padding-right: 10px;
                 scrollbar-width: thin;
-                scrollbar-color: #d4af37 #f1f3f4;
+                scrollbar-color: #329cda #f1f3f4;
             }
 
             .modern-comment-list::-webkit-scrollbar {
@@ -249,13 +246,13 @@
             }
 
             .modern-comment-list::-webkit-scrollbar-thumb {
-                background: linear-gradient(135deg, #d4af37, #f4d03f);
+                background: linear-gradient(135deg, #329cda, #14425d);
                 border-radius: 4px;
                 transition: background 0.3s ease;
             }
 
             .modern-comment-list::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(135deg, #b8941f, #e6c547);
+                background: linear-gradient(135deg, #14425d, #329cda);
             }
 
             .comment-item {
@@ -471,20 +468,20 @@
 
             /* Single Comment Styles */
             .modern-single-comment {
-                background: linear-gradient(180deg, #fbf6e6 0%, #efe4c9 100%),
+                background: linear-gradient(180deg, #fbf6e6 0%, #329cda 100%),
                            repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
                 border-radius: 12px;
                 padding: 16px;
                 margin-bottom: 12px;
-                box-shadow: 0 1px 6px rgba(212, 175, 55, 0.08);
-                border: 1px solid #d4af37;
+                box-shadow: 0 1px 6px #329cda;
+                border: 1px solid #329cda;
                 transition: all 0.3s ease;
                 position: relative;
             }
 
             .modern-single-comment:hover {
-                box-shadow: 0 4px 12px rgba(212, 175, 55, 0.12);
-                border-color: #b8941f;
+                box-shadow: 0 4px 12px #329cda;
+                border-color: #329cda;
             }
 
             /* Comment Header */
@@ -545,7 +542,7 @@
             }
 
             .comment-content:hover {
-                border-left-color: #d4af37;
+                border-left-color: #329cda;
             }
 
             .vip-sieu-viet-content {
@@ -580,9 +577,9 @@
             }
 
             .action-btn:hover {
-                background: #d4af37;
+                background: #329cda;
                 color: white;
-                border-color: #d4af37;
+                border-color: #329cda;
             }
 
             .action-btn.delete-btn:hover {
@@ -591,14 +588,14 @@
             }
 
             .action-btn.submit-btn {
-                background: linear-gradient(135deg, #d4af37, #f4d03f);
+                background: linear-gradient(135deg, #329cda, #14425d);
                 color: white;
                 border: none;
             }
 
             .action-btn.submit-btn:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+                box-shadow: 0 6px 20px #329cda;
             }
 
             .action-btn.cancel-btn:hover {
@@ -632,8 +629,8 @@
 
             .reply-textarea:focus {
                 outline: none;
-                border-color: #d4af37;
-                box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+                border-color: #329cda;
+                box-shadow: 0 0 0 3px #329cda;
             }
 
             .reply-form-actions {
@@ -863,7 +860,7 @@
 
             .custom-badge-tooltiptext {
                 visibility: hidden;
-                background: linear-gradient(135deg, #d4af37, #f4d03f);
+                background: linear-gradient(135deg, #329cda, #14425d);
                 color: white;
                 text-align: center;
                 border-radius: 12px;
@@ -889,7 +886,7 @@
                 margin-left: -8px;
                 border-width: 8px;
                 border-style: solid;
-                border-color: #d4af37 transparent transparent transparent;
+                border-color: #329cda transparent transparent transparent;
             }
 
             .custom-badge-tooltip:hover .custom-badge-tooltiptext {
@@ -962,9 +959,9 @@
             }
 
             .content-badge {
-                color: #cdb94f !important;
+                color: #329cda !important;
                 font-weight: bold;
-                text-shadow: 0 1px 2px rgba(205,185,79,0.3);
+                text-shadow: 0 1px 2px #329cda;
             }
 
             .vip-pro-badge {

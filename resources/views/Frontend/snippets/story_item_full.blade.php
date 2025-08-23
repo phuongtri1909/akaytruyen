@@ -8,7 +8,7 @@
             {{ $story->name }}
         </a>
     </h3>
-    <span class="story-item-full-badge-custom badge mt-2">Full -
+    <span class="story-item-full-badge-custom badge mt-2 text-white">Full -
         {{ $story->chapter_last ? $story->chapter_last->chapter : 0 }} chương</span>
 </div>
 
@@ -33,7 +33,7 @@
             }
 
             .story-item-full-badge-custom {
-                background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%) !important;
+                background: linear-gradient(135deg, #329cda 0%, #14425d 100%) !important;
                 color: #2c1810 !important;
                 font-weight: 600;
                 font-size: 0.75rem;

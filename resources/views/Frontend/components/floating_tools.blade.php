@@ -1,3 +1,4 @@
+@if (Route::currentRouteName() == 'chapter')
 <div class="floating-wuxia-tools m-3">
     <button class="floating-wuxia-tools__fab" id="wuxiaFab" aria-label="Mở công cụ">
         <i class="fa-solid fa-fan"></i>
@@ -5,12 +6,60 @@
     <div class="floating-wuxia-tools__panel" id="wuxiaPanel" aria-hidden="true">
         <button class="wuxia-tool-btn" id="fontDec" title="Giảm cỡ chữ">A-</button>
         <button class="wuxia-tool-btn" id="fontInc" title="Tăng cỡ chữ">A+</button>
+
+        <!-- Font Family Selector -->
+        <div class="wuxia-tool-group">
+            <label class="wuxia-tool-label">Font chữ</label>
+            <select class="wuxia-tool-select setting-font">
+                <option value="roboto" @if (isset($chapterFont) && $chapterFont == 'roboto') selected @endif>ROBOTO</option>
+                <option value="mooli" @if (isset($chapterFont) && $chapterFont == 'mooli') selected @endif>MOOLI</option>
+                <option value="patrick_hand" @if (isset($chapterFont) && $chapterFont == 'patrick_hand') selected @endif>PATRICK HAND</option>
+                <option value="noto_sans" @if (isset($chapterFont) && $chapterFont == 'noto_sans') selected @endif>NOTO SANS</option>
+                <option value="noto_serif" @if (isset($chapterFont) && $chapterFont == 'noto_serif') selected @endif>NOTO SERIF</option>
+                <option value="charter" @if (isset($chapterFont) && $chapterFont == 'charter') selected @endif>CHARTER</option>
+            </select>
+        </div>
+
+        <!-- Font Size Selector -->
+        <div class="wuxia-tool-group">
+            <label class="wuxia-tool-label">Size chữ</label>
+            <select class="wuxia-tool-select setting-font-size">
+                @for ($i = 16; $i <= 48; $i += 2)
+                    <option value="{{ $i }}" @if (isset($chapterFontSize) && $chapterFontSize == $i) selected @endif>{{ $i }}</option>
+                @endfor
+            </select>
+        </div>
+
+        <!-- Line Height Selector -->
+        <div class="wuxia-tool-group">
+            <label class="wuxia-tool-label">Chiều cao dòng</label>
+            <select class="wuxia-tool-select setting-line-height">
+                @for ($i = 100; $i <= 200; $i += 20)
+                    <option value="{{ $i }}" @if (isset($chapterLineHeight) && $chapterLineHeight == $i) selected @endif>{{ $i }}%</option>
+                @endfor
+            </select>
+        </div>
+
         <label class="wuxia-switch" title="Chế độ tối/sáng">
             <input type="checkbox" class="theme_mode">
             <span class="slider"></span>
         </label>
     </div>
 </div>
+@else
+<!-- Theme toggle only for non-chapter pages -->
+<div class="floating-wuxia-tools m-3">
+    <button class="floating-wuxia-tools__fab" id="wuxiaFab" aria-label="Mở công cụ">
+        <i class="fa-solid fa-fan"></i>
+    </button>
+    <div class="floating-wuxia-tools__panel" id="wuxiaPanel" aria-hidden="true">
+        <label class="wuxia-switch" title="Chế độ tối/sáng">
+            <input type="checkbox" class="theme_mode">
+            <span class="slider"></span>
+        </label>
+    </div>
+</div>
+@endif
 
 <div class="floating-wuxia-social m-3 mb-5">
     <a href="https://youtube.com/@AkayTruyen?sub_confirmation=1" target="_blank" rel="noreferrer"
@@ -71,7 +120,7 @@
         display: grid;
         grid-auto-flow: row;
         gap: 8px;
-        padding: 10px;
+        padding: 15px;
         border-radius: 12px;
         width: max-content;
         background: linear-gradient(180deg, #fbf6e6 0%, #efe4c9 100%);
@@ -106,6 +155,38 @@
     .wuxia-tool-btn:active {
         transform: translateY(1px);
         box-shadow: 0 1px 0 #b78f2f;
+    }
+
+    /* Tool groups for font controls */
+    .wuxia-tool-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .wuxia-tool-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #4c380b;
+        margin: 0;
+    }
+
+    .wuxia-tool-select {
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid #b78f2f;
+        background: linear-gradient(180deg, #fff6d7, #f0d98c);
+        color: #4c380b;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 1px 0 #b78f2f;
+        transition: all .15s ease;
+    }
+
+    .wuxia-tool-select:focus {
+        outline: none;
+        border-color: #caa83b;
+        box-shadow: 0 0 0 2px rgba(202, 168, 59, 0.3);
     }
 
     /* switch */
@@ -200,6 +281,16 @@
         background: linear-gradient(180deg, #2c2a26 0%, #24221f 100%);
         border-color: rgba(212, 175, 55, .35);
     }
+
+    .dark-theme .wuxia-tool-label {
+        color: #f0d98c;
+    }
+
+    .dark-theme .wuxia-tool-select {
+        background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
+        color: #f0d98c;
+        border-color: #caa83b;
+    }
 </style>
 
 <script>
@@ -207,43 +298,203 @@
         var fab = document.getElementById('wuxiaFab');
         var panel = document.getElementById('wuxiaPanel');
         if (fab && panel) {
-                    fab.addEventListener('click', function() {
-            panel.classList.toggle('active');
-            fab.classList.toggle('rotated');
-        });
-        }
-
-        function applyChapterFontSize(px) {
-            localStorage.setItem('chapter_fs_px', String(px));
-            var nodes = document.querySelectorAll('.chapter-content');
-            nodes.forEach(function(n) {
-                n.style.fontSize = px + 'px';
+            fab.addEventListener('click', function() {
+                panel.classList.toggle('active');
+                fab.classList.toggle('rotated');
             });
         }
 
-        function getChapterFontSize() {
-            var nodes = document.querySelector('.chapter-content');
-            if (!nodes) return null;
-            var stored = localStorage.getItem('chapter_fs_px');
-            if (stored) return parseInt(stored, 10);
-            var cs = window.getComputedStyle(nodes);
-            return parseInt(cs.fontSize, 10) || 18;
+        // Font configuration (only for chapter pages)
+        if (window.location.pathname.includes('/chuong-') || window.location.pathname.includes('/chapter')) {
+            window.objConfigFont = [{
+                    name: 'roboto',
+                    value: "'Roboto Condensed', sans-serif"
+                },
+                {
+                    name: 'mooli',
+                    value: "'Mooli', sans-serif"
+                },
+                {
+                    name: 'patrick_hand',
+                    value: "'Patrick Hand', cursive"
+                },
+                {
+                    name: 'noto_sans',
+                    value: "'Noto Sans', sans-serif"
+                },
+                {
+                    name: 'noto_serif',
+                    value: "'Noto Serif', serif"
+                },
+                {
+                    name: 'charter',
+                    value: "'Charter', serif"
+                }
+            ];
         }
-        var inc = document.getElementById('fontInc');
-        var dec = document.getElementById('fontDec');
-        if (inc) inc.addEventListener('click', function() {
-            var v = getChapterFontSize() || 18;
-            applyChapterFontSize(Math.min(v + 2, 48));
-        });
-        if (dec) dec.addEventListener('click', function() {
-            var v = getChapterFontSize() || 18;
-            applyChapterFontSize(Math.max(v - 2, 12));
-        });
-        // apply stored size on load
+
+        // Font controls (only for chapter pages)
+        if (window.location.pathname.includes('/chuong-') || window.location.pathname.includes('/chapter')) {
+            function applyChapterFontSize(px) {
+                localStorage.setItem('chapter_fs_px', String(px));
+                // Also save to cookie for compatibility
+                if (window.setCookie) {
+                    window.setCookie('font_size_chapter', px, 1);
+                }
+                var nodes = document.querySelectorAll('.chapter-content');
+                nodes.forEach(function(n) {
+                    n.style.fontSize = px + 'px';
+                });
+                // Update the select dropdown if it exists
+                var fontSizeSelect = document.querySelector('.setting-font-size');
+                if (fontSizeSelect) {
+                    fontSizeSelect.value = px;
+                }
+            }
+
+            function getChapterFontSize() {
+                var nodes = document.querySelector('.chapter-content');
+                if (!nodes) return null;
+                var stored = localStorage.getItem('chapter_fs_px');
+                if (stored) return parseInt(stored, 10);
+                var cs = window.getComputedStyle(nodes);
+                return parseInt(cs.fontSize, 10) || 18;
+            }
+
+            // Font size controls
+            var inc = document.getElementById('fontInc');
+            var dec = document.getElementById('fontDec');
+            if (inc) inc.addEventListener('click', function() {
+                var v = getChapterFontSize() || 18;
+                applyChapterFontSize(Math.min(v + 2, 48));
+            });
+            if (dec) dec.addEventListener('click', function() {
+                var v = getChapterFontSize() || 18;
+                applyChapterFontSize(Math.max(v - 2, 12));
+            });
+
+            // Font family selector
+            var fontSelect = document.querySelector('.setting-font');
+            if (fontSelect) {
+                fontSelect.addEventListener('change', function() {
+                    var selectedFont = this.value;
+                    var fontObj = window.objConfigFont.find(f => f.name === selectedFont);
+                    if (fontObj) {
+                        document.querySelectorAll('.chapter-content').forEach(function(el) {
+                            el.style.fontFamily = fontObj.value;
+                        });
+                        localStorage.setItem('chapterFont', selectedFont);
+                        // Also save to cookie for compatibility
+                        if (window.setCookie) {
+                            window.setCookie('font_chapter', selectedFont, 1);
+                        }
+                    }
+                });
+            }
+
+            // Font size selector
+            var fontSizeSelect = document.querySelector('.setting-font-size');
+            if (fontSizeSelect) {
+                fontSizeSelect.addEventListener('change', function() {
+                    var size = this.value;
+                    document.querySelectorAll('.chapter-content').forEach(function(el) {
+                        el.style.fontSize = size + 'px';
+                    });
+                    localStorage.setItem('chapter_fs_px', size);
+                    // Also save to cookie for compatibility
+                    if (window.setCookie) {
+                        window.setCookie('font_size_chapter', size, 1);
+                    }
+                });
+            }
+
+            // Line height selector
+            var lineHeightSelect = document.querySelector('.setting-line-height');
+            if (lineHeightSelect) {
+                lineHeightSelect.addEventListener('change', function() {
+                    var height = this.value;
+                    document.querySelectorAll('.chapter-content').forEach(function(el) {
+                        el.style.lineHeight = height + '%';
+                    });
+                    localStorage.setItem('chapter_line_height', height);
+                    // Also save to cookie for compatibility
+                    if (window.setCookie) {
+                        window.setCookie('line_height_chapter', height, 1);
+                    }
+                });
+            }
+        }
+
+        // Apply stored settings on load (only for chapter pages)
         document.addEventListener('DOMContentLoaded', function() {
-            var stored = localStorage.getItem('chapter_fs_px');
-            if (stored) {
-                applyChapterFontSize(parseInt(stored, 10));
+            if (window.location.pathname.includes('/chuong-') || window.location.pathname.includes('/chapter')) {
+                // Apply stored font size (check localStorage first, then cookie)
+                var storedFontSize = localStorage.getItem('chapter_fs_px');
+                if (!storedFontSize) {
+                    // Try to get from cookie as fallback
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        if (cookie.startsWith('font_size_chapter=')) {
+                            storedFontSize = cookie.substring('font_size_chapter='.length);
+                            break;
+                        }
+                    }
+                }
+                if (storedFontSize) {
+                    applyChapterFontSize(parseInt(storedFontSize, 10));
+                    var fontSizeSelect = document.querySelector('.setting-font-size');
+                    if (fontSizeSelect) {
+                        fontSizeSelect.value = storedFontSize;
+                    }
+                }
+
+                // Apply stored font family (check localStorage first, then cookie)
+                var storedFont = localStorage.getItem('chapterFont');
+                if (!storedFont) {
+                    // Try to get from cookie as fallback
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        if (cookie.startsWith('font_chapter=')) {
+                            storedFont = cookie.substring('font_chapter='.length);
+                            break;
+                        }
+                    }
+                }
+                if (storedFont) {
+                    var fontSelect = document.querySelector('.setting-font');
+                    var fontObj = window.objConfigFont.find(f => f.name === storedFont);
+                    if (fontObj && fontSelect) {
+                        document.querySelectorAll('.chapter-content').forEach(function(el) {
+                            el.style.fontFamily = fontObj.value;
+                        });
+                        fontSelect.value = storedFont;
+                    }
+                }
+
+                // Apply stored line height (check localStorage first, then cookie)
+                var storedLineHeight = localStorage.getItem('chapter_line_height');
+                if (!storedLineHeight) {
+                    // Try to get from cookie as fallback
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        if (cookie.startsWith('line_height_chapter=')) {
+                            storedLineHeight = cookie.substring('line_height_chapter='.length);
+                            break;
+                        }
+                    }
+                }
+                if (storedLineHeight) {
+                    var lineHeightSelect = document.querySelector('.setting-line-height');
+                    document.querySelectorAll('.chapter-content').forEach(function(el) {
+                        el.style.lineHeight = storedLineHeight + '%';
+                    });
+                    if (lineHeightSelect) {
+                        lineHeightSelect.value = storedLineHeight;
+                    }
+                }
             }
         });
     })();

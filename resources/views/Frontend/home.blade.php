@@ -74,12 +74,12 @@
             background:
                 linear-gradient(180deg, #fbf6e6 0%, #efe4c9 100%),
                 repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0 1px, rgba(0,0,0,0) 1px 3px),
-                linear-gradient(90deg, rgba(170, 130, 50, 0.35), rgba(170, 130, 50, 0.85), rgba(170, 130, 50, 0.35)),
-                linear-gradient(90deg, rgba(170, 130, 50, 0.35), rgba(170, 130, 50, 0.85), rgba(170, 130, 50, 0.35));
+                linear-gradient(90deg, #329cda, #14425d 85%, #329cda),
+                linear-gradient(90deg, #329cda, #14425d 85%, #329cda);
             background-repeat: no-repeat, repeat, no-repeat, no-repeat;
             background-size: cover, auto, 100% 2px, 100% 2px;
             background-position: center, center, top left, bottom left;
-            border: 1px solid #d0b270;
+            border: 1px solid #329cda;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.3);
         }
         /* Left scroll rod (3D cylinder + slide from center) */
@@ -94,8 +94,8 @@
             background:
                 linear-gradient(90deg, rgba(0,0,0,0.35), transparent 30%) left/50% 100% no-repeat,
                 linear-gradient(90deg, transparent 70%, rgba(0,0,0,0.25)) right/50% 100% no-repeat,
-                linear-gradient(90deg, #7a5c2f 0%, #e8c98f 45%, #f1d8a7 50%, #e8c98f 55%, #7a5c2f 100%);
-            border: 1px solid #8b6a35;
+                linear-gradient(90deg, #329cda 0%, #14425d 45%, #329cda 50%, #14425d 55%, #329cda 100%);
+            border: 1px solid #329cda;
             box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18), 3px 0 10px rgba(0,0,0,0.24);
             transform: perspective(600px) rotateY(18deg);
             transform-origin: center;
@@ -113,8 +113,8 @@
             background:
                 linear-gradient(90deg, rgba(0,0,0,0.35), transparent 30%) left/50% 100% no-repeat,
                 linear-gradient(90deg, transparent 70%, rgba(0,0,0,0.25)) right/50% 100% no-repeat,
-                linear-gradient(90deg, #7a5c2f 0%, #e8c98f 45%, #f1d8a7 50%, #e8c98f 55%, #7a5c2f 100%);
-            border: 1px solid #8b6a35;
+                linear-gradient(90deg, #329cda 0%, #14425d 45%, #329cda 50%, #14425d 55%, #329cda 100%);
+            border: 1px solid #329cda;
             box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18), -3px 0 10px rgba(0,0,0,0.24);
             transform: perspective(600px) rotateY(-18deg);
             transform-origin: center;
@@ -130,10 +130,10 @@
             background:
                 linear-gradient(180deg, #2b2b2b 0%, #242424 100%),
                 repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, rgba(255,255,255,0) 1px 3px),
-                linear-gradient(90deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.6), rgba(212, 175, 55, 0.25)),
-                linear-gradient(90deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.6), rgba(212, 175, 55, 0.25));
+                linear-gradient(90deg, #329cda, #14425d 60%, #329cda),
+                linear-gradient(90deg, #329cda, #14425d 60%, #329cda);
             color: #fff;
-            border-color: rgba(212, 175, 55, 0.35);
+            border-color: #329cda;
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(212, 175, 55, 0.15);
         }
 

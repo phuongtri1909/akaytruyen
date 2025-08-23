@@ -46,53 +46,7 @@
                             </li>
                         </ul>
                     </li>
-                    @if (Route::currentRouteName() == 'chapter')
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Tùy chỉnh
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right settings-theme">
-                                <form class="form-horizontal">
-                                    <div class="form-group form-group-sm d-flex align-items-center px-2 mb-2">
-                                        <label class="w-25 control-label me-1" for="setting_font">Font chữ</label>
-                                        <div class="w-75">
-                                            <select class="form-control setting-font">
 
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group form-group-sm d-flex align-items-center px-2 mb-2">
-                                        <label class="w-25 control-label me-1" for="setting_font_size">Size chữ</label>
-                                        <div class="w-75">
-                                            <select class="form-control setting-font-size">
-                                                @for ($i = 16; $i <= 48; $i += 2)
-                                                    <option value="{{ $i }}"
-                                                        @if ($chapterFontSize == $i) selected @endif>
-                                                        {{ $i }}</option>
-                                                @endfor
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group form-group-sm d-flex align-items-center px-2">
-                                        <label class="w-25 control-label me-1" for="setting_line_height">Chiều cao
-                                            dòng</label>
-                                        <div class="w-75">
-                                            <select class="form-control setting-line-height">
-                                                @for ($i = 100; $i <= 200; $i += 20)
-                                                    <option value="{{ $i }}"
-                                                        @if ($chapterLineHeight == $i) selected @endif>
-                                                        {{ $i }}%</option>
-                                                @endfor
-                                            </select>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-                    @endif
                 </ul>
 
 
@@ -232,55 +186,7 @@
                                 @endforeach
                             </ul>
                         </li>
-                        @if (Route::currentRouteName() == 'chapter')
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Tùy chỉnh
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right settings-theme">
-                                    <form class="form-horizontal">
-                                        <div class="form-group form-group-sm d-flex align-items-center px-2 mb-2">
-                                            <label class="w-25 control-label me-1" for="setting_font">Font chữ</label>
-                                            <div class="w-75">
-                                                <select class="form-control setting-font">
 
-
-                                                </select>
-
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-group-sm d-flex align-items-center px-2 mb-2">
-                                            <label class="w-25 control-label me-1" for="setting_font_size">Size
-                                                chữ</label>
-                                            <div class="w-75">
-                                                <select class="form-control setting-font-size">
-                                                    @for ($i = 16; $i <= 48; $i += 2)
-                                                        <option value="{{ $i }}"
-                                                            @if ($chapterFontSize == $i) selected @endif>
-                                                            {{ $i }}</option>
-                                                    @endfor
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group form-group-sm d-flex align-items-center px-2">
-                                            <label class="w-25 control-label me-1" for="setting_line_height">Chiều cao
-                                                dòng</label>
-                                            <div class="w-75">
-                                                <select class="form-control setting-line-height">
-                                                    @for ($i = 100; $i <= 200; $i += 20)
-                                                        <option value="{{ $i }}"
-                                                            @if ($chapterLineHeight == $i) selected @endif>
-                                                            {{ $i }}%</option>
-                                                    @endfor
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </li>
-                        @endif
                     </ul>
 
                     <form class="d-flex header__form-search wuxia-search" action="{{ route('main.search.story') }}"
@@ -539,7 +445,7 @@
 
     .wuxia-search__input {
         border-radius: 12px;
-        border: 1px solid #caa83b;
+        border: 1px solid #329cda;
         background:
             linear-gradient(180deg, #fbf6e6 0%, #efe4c9 100%),
             repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
@@ -552,22 +458,22 @@
 
     .wuxia-search__submit {
         border-radius: 0 12px 12px 0;
-        border: 1px solid #caa83b;
+        border: 1px solid #329cda;
         border-left: 0;
-        background: radial-gradient(circle at 30% 30%, #ffe8a6, #d4af37 70%);
+        background: radial-gradient(circle at 30% 30%, #329cda, #14425d 70%);
         color: #4c380b;
     }
 
     .dark-theme .wuxia-search__input {
         background: linear-gradient(180deg, #2c2a26 0%, #24221f 100%);
         color: #fff;
-        border-color: rgba(212, 175, 55, .35);
+        border-color: #329cda;
     }
 
     .dark-theme .wuxia-search__submit {
         background: radial-gradient(circle at 30% 30%, #a58a36, #6b5a22 70%);
         color: #fff;
-        border-color: rgba(212, 175, 55, .35);
+        border-color: #329cda;
     }
 
     .auth-buttons {

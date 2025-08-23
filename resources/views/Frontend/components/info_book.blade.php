@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="compact-rating">
-                    <div class="rating-title">⭐ Đánh Giá</div>
+                    <div class="rating-title">Đánh Giá</div>
                     <div class="rating-content">
                         <div class="stars-line">
                             @for ($i = 1; $i <= 5; $i++)
@@ -319,10 +319,10 @@
         /* Compact Stats Design */
         .compact-stats {
             background: #ffffff;
-            border: 2px solid #d4af37;
+            border: 2px solid #14425d;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 5px 15px #329cda;
         }
 
         .compact-stats .stats-title {
@@ -332,7 +332,7 @@
             text-align: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #d4af37;
+            border-bottom: 2px solid #14425d;
         }
 
         .stats-row {
@@ -347,7 +347,7 @@
 
         .stat-item {
             flex: 1;
-            background: radial-gradient(circle at 30% 30%, #ffe8a6, #d4af37 70%);
+            background: radial-gradient(circle at 30% 30%, #329cda, #14425d 70%);
             border-radius: 10px;
             padding: 15px;
             text-align: center;
@@ -373,12 +373,12 @@
 
         .stat-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 8px 20px #329cda;
         }
 
         .stat-item i {
             font-size: 20px;
-            color: #333;
+            color: white;
             margin-bottom: 8px;
             display: block;
         }
@@ -386,14 +386,14 @@
         .stat-number {
             font-size: 24px;
             font-weight: 900;
-            color: #333;
+            color: white;
             display: block;
             margin-bottom: 5px;
         }
 
         .stat-label {
             font-size: 11px;
-            color: #666;
+            color: #d4af37;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -402,10 +402,10 @@
         /* Compact Rating Design */
         .compact-rating {
             background: #ffffff;
-            border: 2px solid #d4af37;
+            border: 2px solid #14425d;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 5px 15px #329cda;
         }
 
         .compact-rating .rating-title {
@@ -415,7 +415,7 @@
             text-align: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #d4af37;
+            border-bottom: 2px solid #14425d;
         }
 
         .rating-content {
@@ -466,7 +466,7 @@
 
         .bar-fill {
             height: 100%;
-            background: radial-gradient(circle at 30% 30%, #ffe8a6, #d4af37 70%);
+            background: radial-gradient(circle at 30% 30%, #329cda, #14425d 70%);
             border-radius: 3px;
             transition: width 1.5s ease;
         }

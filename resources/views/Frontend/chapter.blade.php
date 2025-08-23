@@ -687,64 +687,7 @@
 
 @once
     @push('scripts')
-        <script>
-            window.objConfigFont = [{
-                    name: 'roboto',
-                    value: "'Roboto Condensed', sans-serif"
-                },
-                {
-                    name: 'mooli',
-                    value: "'Mooli', sans-serif"
-                },
-                {
-                    name: 'patrick_hand',
-                    value: "'Patrick Hand', cursive"
-                },
-                {
-                    name: 'noto_sans',
-                    value: "'Noto Sans', sans-serif"
-                },
-                {
-                    name: 'noto_serif',
-                    value: "'Noto Serif', serif"
-                },
-                {
-                    name: 'charter',
-                    value: "'Charter', serif"
-                }
-            ];
 
-            // Xử lý thay đổi font chữ
-            $(document).ready(function() {
-                let $fontSelect = $('.setting-font');
-
-                // Thêm tùy chọn vào dropdown
-                window.objConfigFont.forEach(font => {
-                    $fontSelect.append(
-                        `<option value="${font.name}">${font.name.replace('_', ' ').toUpperCase()}</option>`
-                        );
-                });
-
-                // Cập nhật font khi người dùng chọn
-                $fontSelect.change(function() {
-                    let selectedFont = $(this).val();
-                    let fontObj = window.objConfigFont.find(f => f.name === selectedFont);
-                    if (fontObj) {
-                        $('.chapter-content').css('font-family', fontObj.value);
-                        localStorage.setItem('chapterFont', selectedFont);
-                    }
-                });
-
-                // Áp dụng font lưu trong localStorage
-                let savedFont = localStorage.getItem('chapterFont');
-                if (savedFont) {
-                    let fontObj = window.objConfigFont.find(f => f.name === savedFont);
-                    if (fontObj) {
-                        $('.chapter-content').css('font-family', fontObj.value);
-                        $fontSelect.val(savedFont);
-                    }
-                }
-            });
 
             let searchTimeout;
             let currentIndex = -1;
@@ -840,22 +783,7 @@
         </script>
 
         <script>
-            const content = document.getElementById('chapter-content');
-            const chapterSection = document.getElementById('chapter');
-            let fontSize = localStorage.getItem('fontSize') || 18;
-            let theme = localStorage.getItem('theme') || 'light';
 
-            // Font size controls
-            function changeFontSize(delta) {
-                fontSize = Math.max(14, Math.min(24, parseInt(fontSize) + delta));
-                content.style.fontSize = `${fontSize}px`;
-                localStorage.setItem('fontSize', fontSize);
-            }
-            // Initialize settings
-            window.addEventListener('DOMContentLoaded', () => {
-                content.style.fontSize = `${fontSize}px`;
-                // applyTheme(theme);
-            });
 
             document.addEventListener("DOMContentLoaded", function() {
                 let chapterContent = document.getElementById("chapter-content");
