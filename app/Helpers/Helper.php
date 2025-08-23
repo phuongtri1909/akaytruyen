@@ -290,6 +290,18 @@ class Helper
         });
     }
 
+    public static function getCachedUserStats() {
+        return Cache::remember('app:user_stats', now()->addMinutes(30), function () {
+            return [
+                'total' => User::where('active', 'active')->count(),
+                'admin' => User::where('active', 'active')->where('role', 'admin')->count(),
+                'mod' => User::where('active', 'active')->where('role', 'mod')->count(),
+                'user' => User::where('active', 'active')->where('role', 'user')->count(),
+                'vip' => User::where('active', 'active')->where('role', 'vip')->count(),
+            ];
+        });
+    }
+
     static function setSEO($objectSEO)
     {
         $args = [

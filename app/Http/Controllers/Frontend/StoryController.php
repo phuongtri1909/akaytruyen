@@ -26,14 +26,21 @@ class StoryController extends Controller
 
     public function index(Request $request, $slug)
     {
-        $story = $this->storyRepository->getStoryBySlug($slug, ['categories', 'author', 'author.stories', 'star']);
+        // Use cached optimized story detail
+        $story = $this->storyRepository->getCachedStoryDetail($slug);
         if (!$story) {
             abort(404, 'Truyện không tồn tại');
         }
-        $chapters = $this->chapterRepository->getChaptersByStoryId($story->id);
-        $chaptersNew = $this->chapterRepository->getChaptersNewByStoryId($story->id);
-        // dd($chapters);
 
+        // Get pagination settings
+        $isOldFirst = filter_var($request->old_first, FILTER_VALIDATE_BOOLEAN);
+        $page = $request->get('page', 1);
+
+        // Use cached chapters with pagination
+        $chapters = $this->storyRepository->getCachedStoryChapters($story->id, $page, $isOldFirst);
+        $chaptersNew = $this->chapterRepository->getChaptersNewByStoryId($story->id);
+
+        // Cache ratings data
         $ratingsDay = $this->ratingRepository->getRatingByType(Rating::TYPE_DAY);
         $arrStoryIdsRatingsDay = $this->getStoryIds(json_decode($ratingsDay->value ?? '', true)) ?? [];
         $storiesDay = $this->ratingRepository->getStories($arrStoryIdsRatingsDay) ?? [];
@@ -46,13 +53,8 @@ class StoryController extends Controller
         $arrStoryIdsRatingsAllTime = $this->getStoryIds(json_decode($ratingsAllTime->value ?? '', true)) ?? [];
         $storiesAllTime = $this->ratingRepository->getStories($arrStoryIdsRatingsAllTime) ?? [];
 
-        $stats = [
-            'total' => User::where('active', 'active')->count(),
-            'admin' => User::where('active', 'active')->where('role', 'admin')->count(),
-            'mod' => User::where('active', 'active')->where('role', 'mod')->count(),
-            'user' => User::where('active', 'active')->where('role', 'user')->count(),
-            'vip' => User::where('active', 'active')->where('role', 'vip')->count(),
-        ];
+        // Use cached user stats
+        $stats = Helper::getCachedUserStats();
         $setting = Helper::getSetting();
         $objectSEO = (object) [
             'name' => $story->name,
@@ -71,38 +73,26 @@ class StoryController extends Controller
             'published_time' => $story->created_at->toAtomString(),
         ];
 
-        $story = Story::where('slug', $slug)->with(['author', 'categories', 'chapters', 'ratings'])->firstOrFail();
-        $storyViews = Chapter::where('story_id', $story->id)->sum('views');
-
-        $totalChapters = \App\Models\Chapter::where('story_id', $story->id)->count();
-        $totalViews = \App\Models\Chapter::where('story_id', $story->id)->sum('views');
-        $averageRating = \App\Models\Rating::where('story_id', $story->id)->avg('score') ?? 0;
-        $ratingCount = \App\Models\Rating::where('story_id', $story->id)->count();
-
-        // dd($totalChapters, $totalViews, $averageRating, $ratingCount);
+        // Use cached story stats instead of individual queries
+        $storyStats = $this->storyRepository->getCachedStoryStats($story->id);
+        $totalChapters = $storyStats['total_chapters'];
+        $totalViews = $storyStats['total_views'];
+        $storyViews = $totalViews; // same as totalViews
+        $averageRating = $storyStats['average_rating'];
+        $ratingCount = $storyStats['rating_count'];
 
         $isOldFirst = filter_var($request->old_first, FILTER_VALIDATE_BOOLEAN);
         $orderDirection = $isOldFirst ? 'asc' : 'desc';
         Helper::setSEO($objectSEO);
 
-        $maxNumber = Chapter::where('story_id', $story->id)->max('chapter') ?? 0;
-    $minNumber = Chapter::where('story_id', $story->id)->min('chapter') ?? 0;
-    $ranges = [];
+        // Use cached chapter ranges to avoid min/max queries
+        $ranges = $this->storyRepository->getCachedChapterRanges($story->id);
 
-    // Chia chương thành các đoạn 100 chương
-    $totalChunks = ceil(($maxNumber - $minNumber + 1) / 50);
-
-    for ($i = 0; $i < $totalChunks; $i++) {
-        $start = $maxNumber - ($i * 50);
-        $end = max($start - 49, $minNumber);
-        $ranges[] = ["start" => $end, "end" => $start];
-    }
-
-    // Kiểm tra nếu cần đảo ngược thứ tự chương
-    $isOldFirst = $request->input('old_first', 0);
-    if ($isOldFirst) {
-        $ranges = array_reverse($ranges);
-    }
+        // Kiểm tra nếu cần đảo ngược thứ tự chương
+        $isOldFirst = $request->input('old_first', 0);
+        if ($isOldFirst && !empty($ranges)) {
+            $ranges = array_reverse($ranges);
+        }
 
         return view('Frontend.story', compact('story','ranges' ,'chapters', 'chaptersNew', 'slug', 'ratingsDay', 'ratingsMonth', 'ratingsAllTime', 'storiesDay', 'storiesMonth', 'storiesAllTime','stats', 'totalChapters', 'totalViews', 'averageRating', 'ratingCount','storyViews'));
     }

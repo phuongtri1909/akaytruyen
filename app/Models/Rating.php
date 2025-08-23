@@ -15,5 +15,10 @@ class Rating extends Model
     const TYPE_MONTH = 2;
     const TYPE_ALL_TIME = 3;
 
-    protected $fillable = ['status', 'type', 'value'];
+    protected $fillable = ['status', 'type', 'value', 'story_id', 'score'];
+
+    public function story()
+    {
+        return $this->belongsTo(Story::class, 'story_id');
+    }
 }

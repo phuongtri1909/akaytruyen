@@ -9,6 +9,7 @@ use App\Repositories\Chapter\ChapterRepositoryInterface;
 use App\Repositories\Story\StoryRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ChapterController extends Controller
 {
@@ -135,30 +136,30 @@ public function index(Request $request, $slugStory, $slugChapter)
         try {
             $searchTerm = trim($request->input('search'));
             $query = Chapter::query();
-    
+
             // Kiểm tra quyền hiển thị
             if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'mod'])) {
                 $query->where('status', 'published');
             }
-    
+
             if ($searchTerm) {
                 $searchNumber = preg_replace('/[^0-9]/', '', $searchTerm);
-    
+
                 $query->where(function ($q) use ($searchTerm, $searchNumber) {
                     $q->where('name', 'like', "%{$searchTerm}%")
                         ->orWhere('name', 'like', "%{$searchTerm}%");
-    
+
                     if ($searchNumber !== '') {
                         $q->orWhere('number', $searchNumber);
                     }
                 });
             }
-    
+
             $chapters = $query->orderBy('number', 'desc')->get();
-    
+
             // Render lại danh sách chương
             $html = view('components.chapter-items', compact('chapters'))->render();
-    
+
             return response()->json([
                 'html' => $html,
                 'success' => true
@@ -219,6 +220,6 @@ public function removeChapter(Request $request)
 
 
 
-    
+
 
 }

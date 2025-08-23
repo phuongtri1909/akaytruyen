@@ -5,6 +5,7 @@ namespace App\Repositories\Chapter;
 use App\Models\Chapter;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ChapterRepository extends BaseRepository implements ChapterRepositoryInterface
 {
@@ -51,13 +52,15 @@ class ChapterRepository extends BaseRepository implements ChapterRepositoryInter
 
     public function getChaptersNewByStoryId($storyId)
     {
-        return $this->getModel()
-            ->query()
-            ->where('story_id', '=', $storyId)
-            ->where('is_new', '=', Chapter::IS_NEW)
-            ->orderBy('chapter', 'desc')
-            ->select('id', 'name', 'slug')
-            ->get();
+        return Cache::remember("story:chapters_new:{$storyId}", now()->addMinutes(30), function () use ($storyId) {
+            return $this->getModel()
+                ->query()
+                ->where('story_id', '=', $storyId)
+                ->where('is_new', '=', Chapter::IS_NEW)
+                ->orderBy('chapter', 'desc')
+                ->select('id', 'name', 'slug')
+                ->get();
+        });
     }
 
     public function getChapterSingle($storyId, $slug)

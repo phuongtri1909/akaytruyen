@@ -6,6 +6,7 @@ use App\Models\Story;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class StoryRepository extends BaseRepository implements StoryRepositoryInterface
 {
@@ -134,6 +135,91 @@ class StoryRepository extends BaseRepository implements StoryRepositoryInterface
             ->where('slug', '=', $slug)
             ->where('status', '=', Story::STATUS_ACTIVE)
             ->first();
+    }
+
+    public function getStoryBySlugOptimized($slug)
+    {
+        return $this->getModel()
+            ->query()
+            ->with([
+                'categories',
+                'author',
+                'author.stories' => function($query) {
+                    $query->select('id', 'name', 'slug', 'author_id', 'is_new', 'is_full')
+                          ->where('status', Story::STATUS_ACTIVE);
+                },
+                'star',
+                'latestChapter'
+            ])
+            ->where('slug', '=', $slug)
+            ->where('status', '=', Story::STATUS_ACTIVE)
+            ->first();
+    }
+
+    public function getCachedStoryDetail($slug)
+    {
+        return Cache::remember("story:detail:{$slug}", now()->addMinutes(60), function () use ($slug) {
+            return $this->getStoryBySlugOptimized($slug);
+        });
+    }
+
+    public function getCachedStoryChapters($storyId, $page = 1, $isOldFirst = false)
+    {
+        $cacheKey = "story:chapters:{$storyId}:page:{$page}:order:" . ($isOldFirst ? 'asc' : 'desc');
+
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($storyId, $isOldFirst) {
+            return $this->getModel()
+                ->find($storyId)
+                ->chapters()
+                ->orderBy('chapter', $isOldFirst ? 'asc' : 'desc')
+                ->paginate(50);
+        });
+    }
+
+    public function getCachedStoryStats($storyId)
+    {
+        return Cache::remember("story:stats:{$storyId}", now()->addMinutes(30), function () use ($storyId) {
+            $totalChapters = \App\Models\Chapter::where('story_id', $storyId)->count();
+            $totalViews = \App\Models\Chapter::where('story_id', $storyId)->sum('views');
+            $averageRating = \App\Models\Rating::where('story_id', $storyId)->avg('score') ?? 0;
+            $ratingCount = \App\Models\Rating::where('story_id', $storyId)->count();
+
+            return [
+                'total_chapters' => $totalChapters,
+                'total_views' => $totalViews,
+                'average_rating' => $averageRating,
+                'rating_count' => $ratingCount
+            ];
+        });
+    }
+
+    public function getCachedChapterRanges($storyId)
+    {
+        return Cache::remember("story:chapter_ranges:{$storyId}", now()->addMinutes(60), function () use ($storyId) {
+            // Single query to get both min and max
+            $result = \App\Models\Chapter::where('story_id', $storyId)
+                ->selectRaw('MIN(chapter) as min_chapter, MAX(chapter) as max_chapter')
+                ->first();
+
+            if (!$result || !$result->max_chapter) {
+                return [];
+            }
+
+            $maxNumber = $result->max_chapter;
+            $minNumber = $result->min_chapter ?? 0;
+            $ranges = [];
+
+            // Chia chương thành các đoạn 50 chương
+            $totalChunks = ceil(($maxNumber - $minNumber + 1) / 50);
+
+            for ($i = 0; $i < $totalChunks; $i++) {
+                $start = $maxNumber - ($i * 50);
+                $end = max($start - 49, $minNumber);
+                $ranges[] = ["start" => $end, "end" => $start];
+            }
+
+            return $ranges;
+        });
     }
 
     public function getStoriesHotRandom($limit)

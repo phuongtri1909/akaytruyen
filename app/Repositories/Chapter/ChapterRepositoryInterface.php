@@ -11,6 +11,7 @@ interface ChapterRepositoryInterface extends BaseRepositoryInterface
     public function getListChapterByStoryId($storyId);
     public function getChaptersNewByStoryId($storyId);
     public function getChapterSingle($storyId, $slug);
+    public function getChapterLastSingle($storyId);
     public function findBySlug(string $slug);
     public function findBySlugExcept(string $slug, int $id);
 

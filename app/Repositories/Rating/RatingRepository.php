@@ -6,6 +6,7 @@ use App\Models\Rating;
 use App\Models\Story;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class RatingRepository extends BaseRepository implements RatingRepositoryInterface
 {
@@ -20,7 +21,9 @@ class RatingRepository extends BaseRepository implements RatingRepositoryInterfa
 
     public function getRatingByType($type)
     {
-        return $this->getModel()->query()->where('type', '=', $type)->first();
+        return Cache::remember("ratings:type:{$type}", now()->addMinutes(60), function () use ($type) {
+            return $this->getModel()->query()->where('type', '=', $type)->first();
+        });
     }
 
     public function getStories($arrStoryIds)
@@ -29,11 +32,15 @@ class RatingRepository extends BaseRepository implements RatingRepositoryInterfa
             return collect();
         }
 
-        return Story::query()
-            ->with(['categories', 'latestChapter'])
-            ->withCount('chapters')
-            ->whereIn('id', $arrStoryIds)
-            ->orderByRaw('FIELD(id, ' . implode(',', $arrStoryIds) . ')')
-            ->get();
+        $cacheKey = 'ratings:stories:' . md5(implode(',', $arrStoryIds));
+
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($arrStoryIds) {
+            return Story::query()
+                ->with(['categories', 'latestChapter'])
+                ->withCount('chapters')
+                ->whereIn('id', $arrStoryIds)
+                ->orderByRaw('FIELD(id, ' . implode(',', $arrStoryIds) . ')')
+                ->get();
+        });
     }
 }

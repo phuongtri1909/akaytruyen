@@ -38,6 +38,8 @@ use App\Observers\UserTaggedObserver;
 use App\Models\User;
 use App\Models\Notification;
 use App\Models\UserTagged;
+use App\Models\Rating;
+use App\Observers\RatingObserver;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -56,6 +58,7 @@ class AppServiceProvider extends ServiceProvider
         // Register model observers for cache invalidation
         Story::observe(StoryObserver::class);
         Chapter::observe(ChapterObserver::class);
+        Rating::observe(RatingObserver::class);
         LiveComment::observe(LiveCommentObserver::class);
         Livechat::observe(LivechatObserver::class);
         Donation::observe(DonationObserver::class);

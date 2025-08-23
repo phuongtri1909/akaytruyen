@@ -13,8 +13,19 @@ class UserObserver
 
     protected function flushIfRelevant(User $user): void
     {
+        $statsAffectingFields = ['active', 'role'];
+        $changedKeys = array_keys($user->getChanges());
+
+        $affectsUserStats = !empty(array_intersect($changedKeys, $statsAffectingFields));
+
         if ($user->wasChanged('rating')) {
             Cache::forget('stats:total_rating');
+            Cache::forget('app:stats');
+        }
+
+        // Clear user stats cache if relevant fields changed
+        if ($affectsUserStats || $user->wasRecentlyCreated || $user->isDeleted()) {
+            Cache::forget('app:user_stats');
             Cache::forget('app:stats');
         }
     }
