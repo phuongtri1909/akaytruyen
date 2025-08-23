@@ -8,6 +8,7 @@ use App\Services\ChapterService;
 use Error;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ChapterController extends Controller
 {
@@ -27,7 +28,7 @@ class ChapterController extends Controller
     }
 
     public function create($story_id)
-    
+
     {
         $story_id = html_entity_decode($story_id, ENT_QUOTES, 'UTF-8');
         $story = $this->storyRepository->find(intval($story_id));
@@ -39,9 +40,17 @@ class ChapterController extends Controller
 
     public function store(Request $request)
     {
+        // Validate input data
+        $request->validate([
+            'chapter' => 'required|integer|min:1',
+            'name' => 'required|string|max:255',
+            'content' => 'required|string',
+            'story_id' => 'required|integer|exists:stories,id'
+        ]);
+
         $attributes = $request->all();
-        
-        $chapterNumber = $request->input('chapter'); // Ví dụ: 113
+
+        $chapterNumber = intval($request->input('chapter')); // Đảm bảo là integer
         $chapterName   = $request->input('name');    // Ví dụ: "Con đường bà chủ"
 
         $slug = Str::slug("{$chapterNumber} {$chapterName}");
@@ -53,7 +62,7 @@ class ChapterController extends Controller
             $slug = $originalSlug . '-' . $count;
             $count++;
         }
-        
+
         $attributes['slug'] = $slug;
 
         $chapter = $this->repository->create($attributes);
@@ -63,9 +72,9 @@ class ChapterController extends Controller
                 ->with('successMessage', 'Thêm mới chapter thành công nhưng không tạo thông báo.');
         }
             // 🔥 Lưu thông báo vào notifications
-            $users = \DB::table('users')->pluck('id'); // Lấy danh sách user ID
+            $users = DB::table('users')->pluck('id'); // Lấy danh sách user ID
                 foreach ($users as $userId) {
-                    \DB::table('notifications')->insert([
+                    DB::table('notifications')->insert([
                         'user_id' => $userId,
                         'story_id' => $chapter->story_id,
                         'chapter_id' => $chapter->id,
@@ -73,7 +82,7 @@ class ChapterController extends Controller
                         'created_at' => now(),
                     ]);
                 }
-            
+
 
         return redirect()->route('admin.story.show', ['story' => $chapter->story_id])->with('successMessage', 'Thêm mới chapter thành công.');
     }
@@ -96,18 +105,26 @@ class ChapterController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Validate input data
+        $request->validate([
+            'chapter' => 'required|integer|min:1',
+            'name' => 'required|string|max:255',
+            'content' => 'required|string',
+            'story_id' => 'required|integer|exists:stories,id'
+        ]);
+
         $attributes = $request->all();
-        
+
         // Không làm sạch nội dung, chỉ lấy nguyên văn
         $attributes['content'] = $request->input('content');
-    
+
         // Xử lý slug
-        $chapterNumber = $request->input('chapter'); // Ví dụ: 113
+        $chapterNumber = intval($request->input('chapter')); // Đảm bảo là integer
         $chapterName   = $request->input('name');    // Ví dụ: "Con đường bà chủ"
 
         $slug = Str::slug("{$chapterNumber} {$chapterName}");
 
-    
+
         // Kiểm tra slug có trùng không (trừ chính nó)
         $originalSlug = $slug;
         $count = 1;
@@ -115,16 +132,16 @@ class ChapterController extends Controller
             $slug = $originalSlug . '-' . $count;
             $count++;
         }
-    
+
         $attributes['slug'] = $slug;
-    
+
         // Cập nhật chương
         $chapter = $this->repository->update($id, $attributes);
-    
+
         return redirect()->route('admin.story.show', ['story' => $chapter->story_id])
                          ->with('successMessage', 'Thay đổi thành công.');
     }
-    
+
 
     public function destroy($id)
     {
@@ -188,6 +205,6 @@ class ChapterController extends Controller
 // }
 
 
-    
+
 
 }

@@ -72,13 +72,88 @@ class ChapterRepository extends BaseRepository implements ChapterRepositoryInter
             ->first();
     }
 
+    public function getCachedChapterWithNavigation($storyId, $slug)
+    {
+        $cacheKey = "chapter:with_nav:{$storyId}:{$slug}";
+
+        return Cache::remember($cacheKey, now()->addMinutes(60), function () use ($storyId, $slug) {
+            $chapter = $this->getChapterSingle($storyId, $slug);
+
+            if (!$chapter) {
+                return null;
+            }
+
+            // Get navigation chapters in single query
+            $chapterInt = $chapter->chapter;
+            $navigationChapters = $this->getModel()
+                ->query()
+                ->where('story_id', $storyId)
+                ->whereIn('chapter', [$chapterInt - 1, $chapterInt + 1])
+                ->select('id', 'slug', 'chapter', 'name')
+                ->get()
+                ->keyBy('chapter');
+
+            $chapter->chapterBefore = $navigationChapters->get($chapterInt - 1);
+            $chapter->chapterAfter = $navigationChapters->get($chapterInt + 1);
+
+            return $chapter;
+        });
+    }
+
     public function getChapterLastSingle($storyId)
     {
-        return $this->getModel()
-            ->query()
-            ->where('story_id', '=', $storyId)
-            ->orderBy('id', 'DESC')
-            ->first();
+        return Cache::remember("chapter:last:{$storyId}", now()->addMinutes(60), function () use ($storyId) {
+            return $this->getModel()
+                ->query()
+                ->where('story_id', '=', $storyId)
+                ->orderBy('id', 'DESC')
+                ->first();
+        });
+    }
+
+    public function getCachedChapterData($storyId, $slugChapter)
+    {
+        $cacheKey = "chapter:data:{$storyId}:{$slugChapter}";
+
+        return Cache::remember($cacheKey, now()->addMinutes(60), function () use ($storyId, $slugChapter) {
+            $chapter = $this->getModel()
+                ->query()
+                ->where('story_id', '=', $storyId)
+                ->where('slug', '=', $slugChapter)
+                ->with(['story:id,name,slug']) // Eager load story relationship
+                ->first();
+
+            if (!$chapter) {
+                return null;
+            }
+
+            // Get navigation chapters and last chapter in single query
+            $chapterInt = $chapter->chapter;
+            $allChapters = $this->getModel()
+                ->query()
+                ->where('story_id', $storyId)
+                ->where(function($query) use ($chapterInt, $storyId) {
+                    $query->whereIn('chapter', [$chapterInt - 1, $chapterInt + 1])
+                          ->orWhere('id', function($subQuery) use ($storyId) {
+                              $subQuery->select('id')
+                                      ->from('chapters')
+                                      ->where('story_id', $storyId)
+                                      ->orderBy('id', 'DESC')
+                                      ->limit(1);
+                          });
+                })
+                ->select('id', 'slug', 'chapter', 'name')
+                ->get();
+
+            $navigationChapters = $allChapters->whereIn('chapter', [$chapterInt - 1, $chapterInt + 1])->keyBy('chapter');
+            $lastChapter = $allChapters->where('chapter', '!=', $chapterInt - 1)->where('chapter', '!=', $chapterInt + 1)->first();
+
+            $chapter->chapterBefore = $navigationChapters->get($chapterInt - 1);
+            $chapter->chapterAfter = $navigationChapters->get($chapterInt + 1);
+            $chapter->chapterLast = $lastChapter;
+
+            return $chapter;
+        });
     }
     public function findBySlug(string $slug)
     {

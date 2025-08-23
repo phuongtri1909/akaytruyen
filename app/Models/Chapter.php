@@ -20,6 +20,14 @@ class Chapter extends Model
         'is_new',
         'views'
     ];
+
+    protected $casts = [
+        'chapter' => 'integer',
+        'story_id' => 'integer',
+        'is_new' => 'integer',
+        'views' => 'integer'
+    ];
+
     protected $dates = [
         'created_at',
         'updated_at',

@@ -27,7 +27,7 @@ class Comment extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($comment) {
             if ($comment->reply_id) {
                 $parentComment = Comment::find($comment->reply_id);
@@ -39,6 +39,11 @@ class Comment extends Model
     public function replies()
     {
         return $this->hasMany(Comment::class, 'reply_id')->where('level', '<', 3);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'reply_id');
     }
 
     public function reactions()
@@ -79,5 +84,5 @@ public function sads()
     {
         return $query->where('is_pinned', true)->orderBy('pinned_at', 'desc');
     }
-  
+
 }

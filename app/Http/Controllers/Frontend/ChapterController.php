@@ -7,15 +7,18 @@ use App\Models\Chapter;
 use App\Models\Comment;
 use App\Repositories\Chapter\ChapterRepositoryInterface;
 use App\Repositories\Story\StoryRepositoryInterface;
+use App\Repositories\Comment\CommentRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ChapterController extends Controller
 {
     public function __construct(
         protected StoryRepositoryInterface $storyRepository,
-        protected ChapterRepositoryInterface $chapterRepository
+        protected ChapterRepositoryInterface $chapterRepository,
+        protected CommentRepositoryInterface $commentRepository
     ) {
     }
 
@@ -23,26 +26,24 @@ public function index(Request $request, $slugStory, $slugChapter)
 {
     $allowedRoles = ['Admin', 'vip', 'Mod', 'SEO', 'Content', 'VIP PRO', 'VIP PRO MAX', 'VIP SIÊU VIỆT'];
 
-    $story = $this->storyRepository->getStoryBySlug($slugStory);
+    // Use cached story detail
+    $story = $this->storyRepository->getCachedStoryDetail($slugStory);
 
     if (!$story) {
         return abort(404);
     }
 
-    $chapter = $this->chapterRepository->getChapterSingle($story->id, $slugChapter);
-    $chapterLast = $this->chapterRepository->getChapterLastSingle($story->id);
+    // Use cached chapter data (includes navigation and last chapter)
+    $chapter = $this->chapterRepository->getCachedChapterData($story->id, $slugChapter);
+    $chapterLast = $chapter->chapterLast ?? $this->chapterRepository->getChapterLastSingle($story->id);
 
     if (!$chapter) {
         return abort(404, 'Không tồn tại chương truyện này!');
     }
 
-
-    // Xử lý chương kế - trước
-    $chapterInt = $chapter->chapter;
-    $chapterBefore = $chapterInt > 1
-        ? Chapter::where('story_id', $story->id)->where('chapter', $chapterInt - 1)->first()
-        : null;
-    $chapterAfter = Chapter::where('story_id', $story->id)->where('chapter', $chapterInt + 1)->first();
+    // Navigation chapters already loaded in cache
+    $chapterBefore = $chapter->chapterBefore ?? null;
+    $chapterAfter = $chapter->chapterAfter ?? null;
 
     // SEO + Lượt xem
     $setting = Helper::getSetting();
@@ -78,20 +79,9 @@ public function index(Request $request, $slugStory, $slugChapter)
     // Breadcrumb
     $breadcrumbEndpoint = 'Chương ' . $chapter->chapter;
 
-    // Bình luận
-    $pinnedComments = Comment::where('chapter_id', $chapter->slug)
-        ->with(['user', 'replies.user', 'reactions'])
-        ->whereNull('reply_id')
-        ->where('is_pinned', true)
-        ->latest()
-        ->get();
-
-    $regularComments = Comment::where('chapter_id', $chapter->slug)
-        ->with(['user', 'replies.user', 'reactions'])
-        ->whereNull('reply_id')
-        ->where('is_pinned', false)
-        ->latest()
-        ->get();
+    // Bình luận - Sử dụng cached comments với eager loading tối ưu
+    $pinnedComments = $this->commentRepository->getCachedChapterComments($chapter->slug, true, 10);
+    $regularComments = $this->commentRepository->getCachedChapterComments($chapter->slug, false, 20);
 
     // Xử lý AJAX (nếu có)
     if ($request->ajax()) {
@@ -111,10 +101,20 @@ public function index(Request $request, $slugStory, $slugChapter)
         ]);
     }
 
+    // Check if chapter is saved by current user (avoid N+1)
+    $isChapterSaved = false;
+    if (auth()->check()) {
+        $userId = auth()->id();
+        $cacheKey = "user:{$userId}:saved_chapter:{$chapter->id}";
+        $isChapterSaved = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($userId, $chapter) {
+            return auth()->user()->savedChapters()->where('chapter_id', $chapter->id)->exists();
+        });
+    }
+
     // Trả về view
     return view('Frontend.chapter', compact(
         'story', 'chapter', 'slugChapter', 'chapterLast', 'breadcrumbEndpoint',
-        'chapterBefore', 'chapterAfter', 'pinnedComments', 'regularComments','slugStory'
+        'chapterBefore', 'chapterAfter', 'pinnedComments', 'regularComments','slugStory','isChapterSaved'
     ));
 }
 

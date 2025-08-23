@@ -6,15 +6,8 @@
 @endpush
 
 @php
-    $level = 0;
-    $currentComment = $comment;
-    // Count levels by checking parent comments
-    if ($currentComment && $currentComment->reply_id) {
-        while ($currentComment->reply_id && $currentComment->parent) {
-            $level++;
-            $currentComment = $currentComment->parent;
-        }
-    }
+    // Sử dụng level từ database thay vì tính toán
+    $level = $comment->level ?? 0;
 @endphp
 <div class="comment-list">
     <li class="clearfix d-flex" id="comment-{{ $comment->id }} ">
@@ -25,7 +18,10 @@
                     ? asset($comment->user->avatar)
                     : asset('assets/frontend/images/avatar_default.jpg');
 
-            $role = $comment->user ? $comment->user->getRoleNames()->first() : null;
+            // Lấy role từ eager loaded data thay vì query
+            $role = $comment->user && $comment->user->roles && $comment->user->roles->first()
+                ? $comment->user->roles->first()->name
+                : null;
             $email = $comment->user ? $comment->user->email : null;
 
             $borderMap = [
@@ -80,9 +76,10 @@
         <div class="post-comments p-2 p-md-3">
             <div class="content-post-comments">
                 @php
-                    $userRole =
-                        $comment->user && $comment->user->roles ? $comment->user->roles->pluck('name')->first() : null;
-
+                    // Lấy user role từ eager loaded data
+                    $userRole = $comment->user && $comment->user->roles && $comment->user->roles->first()
+                        ? $comment->user->roles->first()->name
+                        : null;
                 @endphp
 
                 <p class="meta mb-2">
@@ -345,16 +342,32 @@
                                 'angry' => 'danger',
                                 'sad' => 'warning',
                             ];
-                            $userReactionType = auth()->check()
-                                ? optional($comment->reactions->where('user_id', auth()->id())->first())->type
-                                : null;
+
+                            // Tính toán reaction counts từ eager loaded data
+                            $reactionCounts = [];
+                            if ($comment->reactions) {
+                                foreach ($reactionTypes as $type) {
+                                    $reactionCounts[$type] = $comment->reactions->where('type', $type)->count();
+                                }
+                            } else {
+                                foreach ($reactionTypes as $type) {
+                                    $reactionCounts[$type] = 0;
+                                }
+                            }
+
+                            // Sử dụng eager loaded reactions thay vì query
+                            $userReactionType = null;
+                            if (auth()->check() && $comment->reactions) {
+                                $userReaction = $comment->reactions->where('user_id', auth()->id())->first();
+                                $userReactionType = $userReaction ? $userReaction->type : null;
+                            }
                         @endphp
 
                         <div id="reaction-display-{{ $comment->id }}">
                             <div class="d-flex gap-1 mt-1">
                                 @foreach ($reactionTypes as $type)
                                     @php
-                                        $count = $comment->{$type . 's'}->count();
+                                        $count = $reactionCounts[$type] ?? 0;
                                     @endphp
 
                                     @if ($count > 0)

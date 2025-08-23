@@ -39,7 +39,9 @@ use App\Models\User;
 use App\Models\Notification;
 use App\Models\UserTagged;
 use App\Models\Rating;
+use App\Models\Comment;
 use App\Observers\RatingObserver;
+use App\Observers\CommentObserver;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -59,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
         Story::observe(StoryObserver::class);
         Chapter::observe(ChapterObserver::class);
         Rating::observe(RatingObserver::class);
+        Comment::observe(CommentObserver::class);
         LiveComment::observe(LiveCommentObserver::class);
         Livechat::observe(LivechatObserver::class);
         Donation::observe(DonationObserver::class);
