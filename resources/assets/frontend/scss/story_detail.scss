@@ -5,7 +5,7 @@
             top: 10px;
 
             .book-3d {
-                box-shadow: 5px 5px 20px #333;  
+                box-shadow: 5px 5px 20px #333;
                 @media (min-width: 992px) {
                     position: relative;
                     transform: perspective(300px) rotateY(-3deg);
@@ -29,7 +29,7 @@
                         left: 7%;
                         background-color: #000;
                     }
-    
+
                     &::before,
                     &::after {
                         position: absolute;
@@ -38,7 +38,7 @@
                         content: ' ';
                         z-index: -1;
                     }
-    
+
                     &::after {
                         width: 4%;
                         left: 100%;
@@ -51,6 +51,9 @@
                 }
 
                 img {
+                    max-height: 350px;
+                    min-height: 350px;
+                    height: 100%;
                     max-width: 100%;
                     ertical-align: middle;
 

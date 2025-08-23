@@ -16,17 +16,13 @@
         href="https://fonts.googleapis.com/css2?family=Mooli&family=Patrick+Hand&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
         rel="stylesheet">
 
-
-    <!-- Bootstrap CSS v5.2.1 -->
-    <link href="{{ asset('assets/frontend/libs/css/bootstrap.min.css') }}" rel="stylesheet">
     <link rel="shortcut icon" href="{{ asset('assets/frontend/images/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset(mix('assets/frontend/css/app.css')) }}">
 
-    <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Noto+Serif:wght@400;700&display=swap"
         rel="stylesheet">
-    <!-- Charter font từ Fontesk -->
+
 
     @stack('styles')
 
@@ -41,7 +37,7 @@
     </style>
 
     <script>
-        window.SuuTruyen = {
+        window.AkayTruyen = {
             baseUrl: '{{ config('app.url') }}',
             urlCurrent: '{{ url()->current() }}',
             csrfToken: '{{ csrf_token() }}'

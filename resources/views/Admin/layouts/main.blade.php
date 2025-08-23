@@ -6,7 +6,7 @@
 
 
     <script>
-        window.SuuTruyen = {
+        window.AkayTruyen = {
             baseUrl: '{{ config('app.url') }}',
             urlCurrent: '{{ url()->current() }}',
             csrfToken: '{{ csrf_token() }}'

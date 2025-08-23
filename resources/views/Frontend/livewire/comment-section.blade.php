@@ -1,7 +1,7 @@
 <div class="modern-comment-section">
     @auth
         <div class="comment-input-card">
-           
+
             <div class="comment-input-body">
                 @include('Frontend.components.user-avatar', ['user' => auth()->user()])
 
@@ -89,18 +89,18 @@
 
             /* Comment Input Card */
             .comment-input-card {
-                background: linear-gradient(135deg, #329cda 0%, #14425d 100%);
+                background: linear-gradient(135deg, #8fc4e3 0%, #14425d 100%);
                 border-radius: 20px;
                 padding: 0;
                 margin-bottom: 30px;
-                box-shadow: 0 20px 40px #329cda;
+                box-shadow: 0 20px 40px #8fc4e3;
                 overflow: hidden;
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             }
 
             .comment-input-card:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 30px 60px #329cda;
+                box-shadow: 0 30px 60px #8fc4e3;
             }
 
             .comment-input-header {
@@ -149,8 +149,8 @@
 
             .modern-textarea:focus {
                 outline: none;
-                border-color: #329cda;
-                box-shadow: 0 0 0 3px #329cda;
+                border-color: #8fc4e3;
+                box-shadow: 0 0 0 3px #8fc4e3;
                 transform: scale(1.02);
             }
 
@@ -173,7 +173,7 @@
             }
 
             .modern-submit-btn {
-                background: linear-gradient(135deg, #329cda 0%, #14425d 100%);
+                background: linear-gradient(135deg, #8fc4e3 0%, #14425d 100%);
                 color: white;
                 border: none;
                 border-radius: 25px;
@@ -206,7 +206,7 @@
 
             .modern-submit-btn:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 10px 25px #329cda;
+                box-shadow: 0 10px 25px #8fc4e3;
             }
 
             .modern-submit-btn:disabled {
@@ -233,7 +233,7 @@
                 overflow-y: auto;
                 padding-right: 10px;
                 scrollbar-width: thin;
-                scrollbar-color: #329cda #f1f3f4;
+                scrollbar-color: #8fc4e3 #f1f3f4;
             }
 
             .modern-comment-list::-webkit-scrollbar {
@@ -246,13 +246,13 @@
             }
 
             .modern-comment-list::-webkit-scrollbar-thumb {
-                background: linear-gradient(135deg, #329cda, #14425d);
+                background: linear-gradient(135deg, #8fc4e3, #14425d);
                 border-radius: 4px;
                 transition: background 0.3s ease;
             }
 
             .modern-comment-list::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(135deg, #14425d, #329cda);
+                background: linear-gradient(135deg, #14425d, #8fc4e3);
             }
 
             .comment-item {
@@ -468,20 +468,20 @@
 
             /* Single Comment Styles */
             .modern-single-comment {
-                background: linear-gradient(180deg, #fbf6e6 0%, #329cda 100%),
+                background: linear-gradient(180deg, #fbf6e6 0%, #8fc4e3 100%),
                            repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
                 border-radius: 12px;
                 padding: 16px;
                 margin-bottom: 12px;
-                box-shadow: 0 1px 6px #329cda;
-                border: 1px solid #329cda;
+                box-shadow: 0 1px 6px #8fc4e3;
+                border: 1px solid #8fc4e3;
                 transition: all 0.3s ease;
                 position: relative;
             }
 
             .modern-single-comment:hover {
-                box-shadow: 0 4px 12px #329cda;
-                border-color: #329cda;
+                box-shadow: 0 4px 12px #8fc4e3;
+                border-color: #8fc4e3;
             }
 
             /* Comment Header */
@@ -542,7 +542,7 @@
             }
 
             .comment-content:hover {
-                border-left-color: #329cda;
+                border-left-color: #8fc4e3;
             }
 
             .vip-sieu-viet-content {
@@ -577,9 +577,9 @@
             }
 
             .action-btn:hover {
-                background: #329cda;
+                background: #8fc4e3;
                 color: white;
-                border-color: #329cda;
+                border-color: #8fc4e3;
             }
 
             .action-btn.delete-btn:hover {
@@ -588,14 +588,14 @@
             }
 
             .action-btn.submit-btn {
-                background: linear-gradient(135deg, #329cda, #14425d);
+                background: linear-gradient(135deg, #8fc4e3, #14425d);
                 color: white;
                 border: none;
             }
 
             .action-btn.submit-btn:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 6px 20px #329cda;
+                box-shadow: 0 6px 20px #8fc4e3;
             }
 
             .action-btn.cancel-btn:hover {
@@ -629,8 +629,8 @@
 
             .reply-textarea:focus {
                 outline: none;
-                border-color: #329cda;
-                box-shadow: 0 0 0 3px #329cda;
+                border-color: #8fc4e3;
+                box-shadow: 0 0 0 3px #8fc4e3;
             }
 
             .reply-form-actions {
@@ -860,7 +860,7 @@
 
             .custom-badge-tooltiptext {
                 visibility: hidden;
-                background: linear-gradient(135deg, #329cda, #14425d);
+                background: linear-gradient(135deg, #8fc4e3, #14425d);
                 color: white;
                 text-align: center;
                 border-radius: 12px;
@@ -886,7 +886,7 @@
                 margin-left: -8px;
                 border-width: 8px;
                 border-style: solid;
-                border-color: #329cda transparent transparent transparent;
+                border-color: #8fc4e3 transparent transparent transparent;
             }
 
             .custom-badge-tooltip:hover .custom-badge-tooltiptext {
@@ -959,9 +959,9 @@
             }
 
             .content-badge {
-                color: #329cda !important;
+                color: #8fc4e3 !important;
                 font-weight: bold;
-                text-shadow: 0 1px 2px #329cda;
+                text-shadow: 0 1px 2px #8fc4e3;
             }
 
             .vip-pro-badge {

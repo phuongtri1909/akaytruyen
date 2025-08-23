@@ -277,7 +277,7 @@
                                 headers: {
                                     'Accept': 'application/json',
                                     'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': window.SuuTruyen.csrfToken,
+                                    'X-CSRF-TOKEN': window.AkayTruyen.csrfToken,
                                 },
                                 body: JSON.stringify({
                                     id: chapterId

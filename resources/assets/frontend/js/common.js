@@ -19,7 +19,7 @@ $(document).ready(function () {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': window.SuuTruyen.csrfToken,
+                        'X-CSRF-TOKEN': window.AkayTruyen.csrfToken,
                     },
                     body: JSON.stringify({
                         key_word: $(this).val()
@@ -33,7 +33,7 @@ $(document).ready(function () {
                             if (searchResult) {
                                 searchResult.removeClass('d-none')
                                 list.empty()
-    
+
                                 searchResult.removeClass('no-result')
                                 list.removeClass('d-none')
 
@@ -48,7 +48,7 @@ $(document).ready(function () {
                                 } else {
                                     html += `
                                     <li class="list-group-item border-0">
-                                    Không tìm thấy truyện nào 
+                                    Không tìm thấy truyện nào
                                     </li>
                                     `
                                 }

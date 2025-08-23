@@ -40,7 +40,7 @@ $(document).ready(function () {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': window.SuuTruyen.csrfToken,
+                        'X-CSRF-TOKEN': window.AkayTruyen.csrfToken,
                     },
                     body: JSON.stringify({
                         story_id: $(this).attr('data-story-id')
@@ -127,5 +127,5 @@ $(document).ready(function () {
         }
     });
 
-    // Handle history chapter reading 
+    // Handle history chapter reading
 })

@@ -110,7 +110,7 @@
                                                 </div>
                                             </form>
                                         </td> -->
-                                        
+
                                         <td>
                                             <label class="switch">
                                                 <input class="switch_is_full switch-attribute" data-type="is_full"
@@ -220,7 +220,7 @@
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': window.SuuTruyen.csrfToken,
+                            'X-CSRF-TOKEN': window.AkayTruyen.csrfToken,
                         },
                         body: JSON.stringify(data)
                     })
@@ -281,7 +281,7 @@
                                 headers: {
                                     'Accept': 'application/json',
                                     'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': window.SuuTruyen.csrfToken,
+                                    'X-CSRF-TOKEN': window.AkayTruyen.csrfToken,
                                 },
                                 body: JSON.stringify({
                                     id: storyId
@@ -339,7 +339,7 @@
                                 headers: {
                                     'Accept': 'application/json',
                                     'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': window.SuuTruyen.csrfToken,
+                                    'X-CSRF-TOKEN': window.AkayTruyen.csrfToken,
                                 },
                                 body: JSON.stringify(body)
                             })

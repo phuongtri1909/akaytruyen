@@ -156,7 +156,7 @@ $(document).ready(function () {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': window.SuuTruyen.csrfToken,
+                    'X-CSRF-TOKEN': window.AkayTruyen.csrfToken,
                 },
                 body: JSON.stringify({
                     category_id: category_id
@@ -236,5 +236,5 @@ $(document).ready(function () {
             }
 
         }, 50000);
-    }  
+    }
 })

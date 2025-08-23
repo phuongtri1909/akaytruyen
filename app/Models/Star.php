@@ -8,7 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Star extends Model
 {
     use HasFactory;
-    
+
+    protected $fillable = [
+        'story_id',
+        'stars',
+        'controller_name',
+        'count',
+        'approved',
+    ];
+
     const IS_APPROVED = 1;
 
     public function story() {

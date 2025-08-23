@@ -1,4 +1,4 @@
-<div class="section-stories-new mb-3">
+<div class="section-stories-new mb-3 mt-5">
     <div class="row">
         @include('Frontend.snippets.head_title_global', [
             'title' => 'Truyện Mới',

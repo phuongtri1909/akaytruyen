@@ -28,12 +28,13 @@
                 min-height: 250px;
             }
 
-            .story-item-full-name-custom {
-                text-shadow: 0px 0px 2px #000;
+            .story-item-full-name-custom a {
+                color: #2c1810 !important;
+                text-shadow: 0px 0px 2px #000 !important;
             }
 
             .story-item-full-badge-custom {
-                background: linear-gradient(135deg, #329cda 0%, #14425d 100%) !important;
+                background: linear-gradient(135deg, #8fc4e3 0%, #14425d 100%) !important;
                 color: #2c1810 !important;
                 font-weight: 600;
                 font-size: 0.75rem;

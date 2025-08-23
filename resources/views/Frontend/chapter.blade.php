@@ -688,7 +688,7 @@
 @once
     @push('scripts')
 
-
+        <script>
             let searchTimeout;
             let currentIndex = -1;
             let matches = [];

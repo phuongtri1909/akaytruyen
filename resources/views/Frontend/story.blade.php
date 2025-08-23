@@ -6,110 +6,7 @@
     {!! SEO::generate() !!}
 @endpush
 
-@push('before_content')
-    <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous"
-        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v18.0&appId=642249148046913&autoLogAppEvents=1"
-        nonce="Tt2viYEC"></script>
-@endpush
-
 @section('content')
-
-
-    <style>
-        .chapter-card {
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        .chapter-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .stats-list-chapter {
-            display: flex;
-            flex-direction: row;
-            gap: 0.8rem;
-        }
-
-        .counter-chapter {
-            font-weight: bold;
-            margin-right: 5px;
-            transition: all 0.3s ease-out;
-        }
-
-        .stat-item-chapter {
-            opacity: 0;
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        .new-badge {
-            color: #ff0000;
-            font-weight: bold;
-            margin-left: 5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .new-badge {
-            animation: pulse 1s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.2);
-                opacity: 0.7;
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .chapter-list li a {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .chapter-list .date {
-            font-weight: bold;
-            border: 1px solid;
-            display: flex;
-            border-radius: 4px;
-            text-align: center;
-            width: 45px;
-            height: 51px;
-            line-height: 1.2;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .chapter-list {
-            list-style: none;
-            /* Xóa dấu chấm trước mỗi <li> */
-            padding: 0;
-            /* Loại bỏ khoảng trắng mặc định của danh sách */
-        }
-
-        .chapter-list li {
-            border-bottom: none !important;
-            /* Loại bỏ đường kẻ dưới mỗi mục */
-            margin-bottom: 8px;
-            /* Tạo khoảng cách giữa các chương */
-        }
-    </style>
-
     @php
         if (count($chapters->items()) > 1) {
             $arrChapters = array_chunk($chapters->items(), count($chapters->items()) / 2);
@@ -117,21 +14,17 @@
             $arrChapters[] = $chapters->items();
         }
         $storyFinal = $story;
+
+
     @endphp
 
     <input type="hidden" id="story_slug" value="{{ $slug }}">
     <div class="container">
         <div class="row align-items-start">
             <div class="col-12 col-md-7 col-lg-8">
-                <div class="head-title-global d-flex justify-content-between mb-4">
-                    <div class="col-12 col-md-12 col-lg-4 head-title-global__left d-flex">
-                        <h2 class="me-2 mb-0 border-bottom border-secondary pb-1">
-                            <span class="d-block text-decoration-none text-dark fs-4 title-head-name"
-                                title="Thông tin truyện">Thông
-                                tin truyện</span>
-                        </h2>
-                    </div>
-                </div>
+                @include('Frontend.snippets.title_component', [
+                    'title' => 'Thông tin truyện',
+                ])
 
                 <div class="story-detail">
                     <div class="story-detail__top d-flex align-items-start">
@@ -143,7 +36,8 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-12 col-lg-9">
-                                <h3 class="text-center story-name">{{ $story->name }}</h3>
+                                <h3 class="text-center story-name fw-bold">{{ $story->name }}</h3>
+                                <hr>
                                 @if (isset($story->star))
                                     <div class="rate-story mb-2">
                                         <div class="rate-story__holder" data-score="{{ $story->star->stars }}">
@@ -227,7 +121,7 @@
                         </div>
                     </div>
 
-                    <div class="story-detail__bottom mb-3">
+                    <div class="story-detail__bottom mb-3 mt-4">
                         <div class="row">
                             <div class="col-12 col-md-12 col-lg-3 story-detail__bottom--info">
                                 <p class="mb-1">
@@ -240,13 +134,6 @@
                                     <div class="d-flex align-items-center flex-warp">
                                         @if ($story->categories)
                                             @foreach ($story->categories as $category)
-                                                {{-- @if (!$loop->last)
-                                                    <a href="#" class="text-decoration-none text-dark hover-title me-1" style="width: max-content;">{{ $category->name }},</a>
-                                                @else
-                                                    <a href="#"
-                                                        class="text-decoration-none text-dark hover-title" style="width: max-content;">{{ $category->name }}</a>
-                                                @endif --}}
-
                                                 <a href="#"
                                                     class="text-decoration-none text-dark hover-title @if (!$loop->last) me-1 @endif"
                                                     style="width: max-content;">{{ $category->name }}@if (!$loop->last)
@@ -257,11 +144,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                {{-- <p class="mb-1">
-                                    <strong>Nguồn:</strong>
-                                    <a href="#" class="text-decoration-none text-dark hover-title">Phong Nguyệt
-                                        Lầu</a>
-                                </p> --}}
+
                                 <p class="mb-1">
                                     <strong>Trạng thái:</strong>
                                     <span class="text-info">{{ $story->is_full ? 'Full' : 'Đang ra' }}</span>
@@ -270,23 +153,16 @@
 
                             @if (count($chaptersNew) > 0)
                                 <div class="col-12 col-md-12 col-lg-9">
-                                    <div class="head-title-global d-flex justify-content-between mb-2">
-                                        <div class="col-12 col-md-12 col-lg-6 head-title-global__left d-flex">
-                                            <h2 class="me-2 mb-0 border-bottom border-secondary pb-1">
-
-                                                <span href="#"
-                                                    class="d-block text-decoration-none text-dark fs-4 title-head-name"
-                                                    title="Truyện hot">Các chương mới nhất</span>
-                                            </h2>
-                                        </div>
-                                    </div>
+                                    @include('Frontend.snippets.title_component', [
+                                        'title' => 'Các chương mới nhất',
+                                    ])
 
                                     <div class="story-detail__bottom--chapters-new">
                                         <ul>
                                             @foreach ($chaptersNew as $chapterNew)
-                                                <li style="list-style: none">
+                                                <li style="list-style: none" class="story-stop-rating py-3">
                                                     <a href="{{ route('chapter', ['slugStory' => $story->slug, 'slugChapter' => $chapterNew->slug]) }}"
-                                                        class="text-decoration-none text-dark hover-title"><span
+                                                        class="text-decoration-none hover-title"><span
                                                             class="new-badge">{{ $chapterNew->name }}</span></a>
                                                 </li>
                                             @endforeach
@@ -298,40 +174,40 @@
                         </div>
                     </div>
 
-                    <!-- thong ke -->
-
-
-
-
-                    <!-- end thong ke -->
-
                     <div class="story-detail__list-chapter">
-                        <div class="container mt-2">
-                            <div class="card-search py-2">
-                                <div class="search-wrapper">
-                                    <h5 class="text-center fw-bold">Tìm kiếm </h5>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="search-chapter"
-                                            data-story-slug="{{ $story->slug }}"
-                                            placeholder="Chương, Tên chương, Nội dung ...">
-                                        <button class="btn btn-primary" type="button" id="btn-search">
-                                            <i class="fas fa-search"></i>
-                                        </button>
+                        <div class="row">
+                            <div class="col-12 col-sm-7 col-md-12 col-lg-7">
+                                @include('Frontend.snippets.title_component', [
+                                    'title' => 'Danh sách chương',
+                                ])
+                            </div>
+                            <div class="col-12 col-sm-5 col-md-12 col-lg-5">
+
+                                <div class="card-search py-2">
+                                    <div class="search-wrapper">
+
+                                        <div class="wuxia-search">
+                                            <div class="wuxia-search__container">
+                                                <input class="form-control wuxia-search__input" type="text"
+                                                    id="search-chapter" data-story-slug="{{ $story->slug }}"
+                                                    placeholder="Chương, Tên chương, Nội dung ...">
+                                                <button class="btn wuxia-search__submit" type="button" id="btn-search"
+                                                    aria-label="Tìm kiếm">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                                                        viewBox="0 0 512 512">
+                                                        <path
+                                                            d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 
 
-                        <div class="head-title-global d-flex justify-content-between mb-4">
-                            <div class="col-6 col-md-12 col-lg-4 head-title-global__left d-flex">
-                                <h2 class="me-2 mb-0 border-bottom border-secondary pb-1">
-                                    <span href="#"
-                                        class="d-block text-decoration-none text-dark fs-4 title-head-name"
-                                        title="Truyện hot">Danh sách chương</span>
-                                </h2>
-                            </div>
-                        </div>
 
                         <div class="form-check ms-0 ms-md-3 mt-3 mt-md-0">
                             <input class="form-check-input" type="checkbox" id="orderToggle"
@@ -342,7 +218,7 @@
                         </div>
 
                         @php
-                            $isOldFirst = request()->input('old_first', false); // Lấy trạng thái từ URL
+                            $isOldFirst = request()->input('old_first', false);
                             $reversedChapters = $isOldFirst
                                 ? $chapters->sortBy('chapter')
                                 : $chapters->sortByDesc('chapter');
@@ -350,98 +226,12 @@
 
 
 
-                        <div class="story-detail__list-chapter--list">
-
-                            <div class="row" id="chapters-container">
-
-                                {{-- Mobile View: Single Column --}}
-                                <div class="d-block d-md-none">
-                                    <ul class="chapter-list text-muted">
-                                        @foreach ($reversedChapters as $chapter)
-                                            <li class="mt-2">
-                                                <a href="{{ route('chapter', ['slugStory' => $story->slug, 'slugChapter' => $chapter->slug]) }}"
-                                                    class="text-muted">
-                                                    <span class="date">
-                                                        <span>{{ $chapter->created_at->format('d') }}</span>
-                                                        <span
-                                                            class="fs-7">{{ $chapter->created_at->format('m') }}</span>
-                                                    </span>
-
-
-
-
-                                                    <span class="chapter-title ms-2">
-                                                        Chương {{ $chapter->chapter }}: {{ $chapter->name }}
-                                                        @if ($chapter->created_at->isToday())
-                                                            <span class="new-badge">New</span>
-                                                        @endif
-                                                    </span>
-                                                </a>
-                                                <hr class="my-2 opacity-25">
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-
-                                {{-- Desktop View: Two Columns --}}
-                                <div class="col-6 d-none d-md-block">
-                                    <ul class="chapter-list text-muted">
-                                        @foreach ($reversedChapters->take(ceil($reversedChapters->count() / 2)) as $chapter)
-                                            <li class="mt-2">
-                                                <a href="{{ route('chapter', ['slugStory' => $story->slug, 'slugChapter' => $chapter->slug]) }}"
-                                                    class="text-muted">
-                                                    <span class="date">
-                                                        <span>{{ $chapter->created_at->format('d') }}</span>
-                                                        <span
-                                                            class="fs-7">{{ $chapter->created_at->format('m') }}</span>
-                                                    </span>
-
-                                                    <span class="chapter-title ms-2">
-                                                        Chương {{ $chapter->chapter }}: {{ $chapter->name }}
-                                                        @if ($chapter->created_at->isToday())
-                                                            <span class="new-badge">New</span>
-                                                        @endif
-                                                    </span>
-                                                </a>
-                                                <hr class="my-2 opacity-25">
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-
-                                <div class="col-6 d-none d-md-block">
-                                    <ul class="chapter-list text-muted">
-                                        @foreach ($reversedChapters->skip(ceil($reversedChapters->count() / 2)) as $chapter)
-                                            <li class="mt-2">
-                                                <a href="{{ route('chapter', ['slugStory' => $story->slug, 'slugChapter' => $chapter->slug]) }}"
-                                                    class="text-muted">
-                                                    <span class="date">
-                                                        <span>{{ $chapter->created_at->format('d') }}</span>
-                                                        <span
-                                                            class="fs-7">{{ $chapter->created_at->format('m') }}</span>
-                                                    </span>
-
-                                                    <span class="chapter-title ms-2">
-                                                        Chương {{ $chapter->chapter }}: {{ $chapter->name }}
-                                                        @if ($chapter->created_at->isToday())
-                                                            <span class="new-badge">New</span>
-                                                        @endif
-                                                    </span>
-                                                </a>
-                                                <hr class="my-2 opacity-25">
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                        <div class="story-detail__list-chapter--list mt-3">
+                            <div id="chapters-container">
+                                @include('Frontend.components.chapter-list', ['chapters' => $reversedChapters, 'storySlug' => $story->slug])
                             </div>
                         </div>
-
-
-
                     </div>
-
-
-
                     <div class="pagination" style="justify-content: center;">
                         {{ $chapters->appends(request()->query())->onEachSide(2)->links('Frontend.snippets.custom_pagination', ['has_ajax' => true]) }}
                     </div>
@@ -450,16 +240,20 @@
             </div>
 
             <div class="col-12 col-md-5 col-lg-4 sticky-md-top">
+                @include('Frontend.snippets.top_ratings', [
+                    'ratingsDay' => $ratingsDay,
+                    'ratingsMonth' => $ratingsMonth,
+                    'ratingsAllTime' => $ratingsAllTime,
+                    'storiesDay' => $storiesDay,
+                    'storiesMonth' => $storiesMonth,
+                    'storiesAllTime' => $storiesAllTime,
+                ])
+
                 @if ($story->author->stories->count() - 1 > 0)
-                    <div class="section-stories-reading bg-light p-2 rounded mb-3 card-custom">
-                        <div class="head-title-global mb-2">
-                            <div class="col-12 col-md-12 head-title-global__left">
-                                <h2 class="mb-0 border-bottom border-secondary pb-1">
-                                    <span href="#" class="d-block text-decoration-none text-dark fs-4"
-                                        title="Truyện đang đọc">Truyện cùng tác giả</span>
-                                </h2>
-                            </div>
-                        </div>
+                    <div class="section-stories-reading p-2 rounded mb-3">
+                        @include('Frontend.snippets.title_component', [
+                            'title' => 'Truyện cùng tác giả',
+                        ])
                         <div class="stories-reading">
                             @foreach ($story->author->stories as $storyNear)
                                 @if ($storyNear->slug != $story->slug)
@@ -467,16 +261,16 @@
                                         <div class="story-item-no-image__name d-flex align-items-center border-0"
                                             style="width: 70%;">
                                             <h3 class="me-1 mb-0 d-flex align-items-center">
-                                                <i class="fa-solid fa-angle-right me-1"></i>
+                                                <i class="fa-solid fa-chevron-right"></i>
                                                 <a href="{{ route('story', ['slug' => $storyNear->slug]) }}"
                                                     class="text-decoration-none text-dark fs-6 hover-title text-one-row">{{ $storyNear->name }}</a>
                                             </h3>
                                             @if ($storyNear->is_new)
-                                                <span class="badge text-bg-info text-light me-1">New</span>
+                                                <span class="section-stories-reading label-title label-new">New</span>
                                             @endif
 
                                             @if ($storyNear->is_full)
-                                                <span class="badge text-bg-success text-light">Full</span>
+                                                <span class="section-stories-reading label-title label-full">Full</span>
                                             @endif
                                         </div>
                                     </div>
@@ -486,14 +280,7 @@
                     </div>
                 @endif
 
-                @include('Frontend.snippets.top_ratings', [
-                    'ratingsDay' => $ratingsDay,
-                    'ratingsMonth' => $ratingsMonth,
-                    'ratingsAllTime' => $ratingsAllTime,
-                    'storiesDay' => $storiesDay,
-                    'storiesMonth' => $storiesMonth,
-                    'storiesAllTime' => $storiesAllTime,
-                ])
+
                 @include('Frontend.sections.main.list_category')
             </div>
         </div>
@@ -504,32 +291,213 @@
     </div>
 @endsection
 
+@push('styles')
+    <style>
+        .chapter-card {
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-list-chapter {
+            display: flex;
+            flex-direction: row;
+            gap: 0.8rem;
+        }
+
+        .counter-chapter {
+            font-weight: bold;
+            margin-right: 5px;
+            transition: all 0.3s ease-out;
+        }
+
+        .stat-item-chapter {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .new-badge {
+            color: #ff0000;
+            font-weight: bold;
+            margin-left: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .new-badge {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .chapter-list li a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .chapter-list .date {
+            font-weight: bold;
+            border: 1px solid;
+            display: flex;
+            border-radius: 4px;
+            text-align: center;
+            width: 45px;
+            height: 51px;
+            line-height: 1.2;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .chapter-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .chapter-list li {
+            border-bottom: none !important;
+            margin-bottom: 8px;
+        }
+
+        .section-stories-reading.label-title.label-new {
+            border-color: #8EB3FD;
+            color: #8EB3FD;
+        }
+
+        .section-stories-reading.label-title.label-full {
+            border-color: #86AD86;
+            color: #86AD86;
+        }
+
+        .section-stories-reading.label-title {
+            padding: 1px 3px;
+            font-size: 13px;
+            vertical-align: bottom;
+            margin-left: 5px;
+            border: 1px solid;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .stories-reading .fa-chevron-right {
+            font-size: 14px;
+            color: #999;
+            margin-right: 8px;
+        }
+
+        /* Wuxia search box styling for story page */
+        .wuxia-search {
+            position: relative;
+        }
+
+        .wuxia-search__container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .wuxia-search__input {
+            border-radius: 12px;
+            border: 1px solid #8fc4e3;
+            background:
+                linear-gradient(180deg, #fbf6e6 0%, #efe4c9 100%),
+                repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4);
+            padding-right: 50px;
+            width: 100%;
+        }
+
+        .wuxia-search__input::placeholder {
+            color: #7a5c2f;
+        }
+
+        .wuxia-search__submit {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 8px;
+            border: none;
+            background: radial-gradient(circle at 30% 30%, #8fc4e3, #14425d 70%);
+            color: #4c380b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .wuxia-search__submit:hover {
+            background: radial-gradient(circle at 30% 30%, #a58a36, #6b5a22 70%);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .dark-theme .wuxia-search__input {
+            background: linear-gradient(180deg, #2c2a26 0%, #24221f 100%);
+            color: #fff;
+            border-color: #8fc4e3;
+        }
+
+        .dark-theme .wuxia-search__submit {
+            background: radial-gradient(circle at 30% 30%, #a58a36, #6b5a22 70%);
+            color: #fff;
+        }
+
+        .dark-theme .wuxia-search__submit:hover {
+            background: radial-gradient(circle at 30% 30%, #c4a94a, #8b7a2e 70%);
+        }
+
+
+    </style>
+@endpush
+
 @push('scripts')
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org/",
-      "@type": "Book",
-      "name": "{{ $storyFinal->name }}",
-      "author": {
-        "@type":"Person",
-        "name": "{{ $storyFinal->author->name }}"
-      },
-      "url" : "{{ route('story', $storyFinal->slug) }}",
-      "image": "{{ asset($storyFinal->image) }}",
-      "thumbnailUrl": "{{ asset($storyFinal->image) }}",
-      "description": "{!! Str::limit($storyFinal->desc, 50) !!}",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "{{ isset($storyFinal->star) ? $storyFinal->star->stars : 0 }}",
-        "bestRating": "10",
-        "ratingCount": "{{ isset($storyFinal->star) ? $storyFinal->star->count : 0 }}"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Suu Truyen"
-      }
-    }
-</script>
+        {
+        "@context": "https://schema.org/",
+        "@type": "Book",
+        "name": "{{ $storyFinal->name }}",
+        "author": {
+            "@type":"Person",
+            "name": "{{ $storyFinal->author->name }}"
+        },
+        "url" : "{{ route('story', $storyFinal->slug) }}",
+        "image": "{{ asset($storyFinal->image) }}",
+        "thumbnailUrl": "{{ asset($storyFinal->image) }}",
+        "description": "{!! Str::limit($storyFinal->desc, 50) !!}",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "{{ isset($storyFinal->star) ? $storyFinal->star->stars : 0 }}",
+            "bestRating": "10",
+            "ratingCount": "{{ isset($storyFinal->star) ? $storyFinal->star->count : 0 }}"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Suu Truyen"
+        }
+        }
+    </script>
     <script type="application/ld+json">
         {
         "@context": "https://schema.org/",
@@ -549,7 +517,7 @@
             }
         ]
         }
-</script>
+    </script>
 
     <script src="{{ asset(mix('assets/frontend/js/story.js')) }}"></script>
 @endpush
@@ -615,52 +583,6 @@
     </script>
     <script>
         $(document).ready(function() {
-            // function loadChapters() {
-            //     const chapterRange = @json($ranges); // dùng json lấy giá trị từ controllerr trả ra
-            //     const page = '{{ request('page') }} '; // lấy giá trị page từ req
-
-            //     console.log(chapterRange);
-
-            //     const start = chapterRange[0].start; //  lấy giá trị đầu tiên của mảng theo page
-            //     const end = chapterRange[0].end; // lấy giá trị cuối của mảng theo page
-            //     // let chapterRange = $('.chapter-list').val();
-
-            //     // if (!chapterRange || !chapterRange.includes(',')) {
-            //     //     console.log('Không tìm thấy giá trị chapter-list hoặc định dạng không hợp lệ');
-            //     //     return;
-            //     // }
-
-            //     // const [start, end] = chapterRange.split(',');
-            //     // console.log("end", end);
-            //     // console.log("start", start);
-
-            //     const isOldFirst = $('#orderToggle').prop('checked') ? 1 : 0;
-
-            //     console.log('Gửi dữ liệu:', { start, end, old_first: isOldFirst });
-
-            //     $.ajax({
-            //         url: "{{ route('story', $story->slug) }}", // Laravel Blade syntax
-            //         type: 'GET',
-            //         data: {
-            //             start: start,
-            //             end: end,
-            //             old_first: isOldFirst
-            //         },
-            //         success: function (response) {
-            //             const tempDiv = document.createElement('div');
-            //             tempDiv.innerHTML = response;
-
-            //             // Xóa các thẻ <script> thừa
-            //             const scripts = tempDiv.querySelectorAll('script');
-            //             scripts.forEach(script => script.remove());
-
-            //             document.getElementById('chapters-container').innerHTML = tempDiv.innerHTML;
-            //         },
-            //         error: function (xhr) {
-            //             console.error('Có lỗi xảy ra khi tải dữ liệu', xhr.responseText);
-            //         }
-            //     });
-            // }
             document.getElementById('orderToggle').addEventListener('change', function() {
                 const isChecked = this.checked ? 1 : 0;
                 const url = new URL(window.location.href);
@@ -668,12 +590,7 @@
                 window.location.href = url.href;
             });
 
-            // Gán sự kiện change cho danh sách chương
-            // $('.chapter-list').on('change', loadChapters);
-
-            // Gán sự kiện thay đổi thứ tự sắp xếp chương
             $('#orderToggle').on('change', function() {
-                console.log('Checkbox changed:', $(this).prop('checked'));
                 loadChapters();
             });
         });

@@ -322,7 +322,7 @@
             border: 2px solid #14425d;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 15px #329cda;
+            box-shadow: 0 5px 15px #8fc4e3;
         }
 
         .compact-stats .stats-title {
@@ -347,7 +347,7 @@
 
         .stat-item {
             flex: 1;
-            background: radial-gradient(circle at 30% 30%, #329cda, #14425d 70%);
+            background: radial-gradient(circle at 30% 30%, #8fc4e3, #14425d 70%);
             border-radius: 10px;
             padding: 15px;
             text-align: center;
@@ -373,7 +373,7 @@
 
         .stat-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px #329cda;
+            box-shadow: 0 8px 20px #8fc4e3;
         }
 
         .stat-item i {
@@ -405,7 +405,7 @@
             border: 2px solid #14425d;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 15px #329cda;
+            box-shadow: 0 5px 15px #8fc4e3;
         }
 
         .compact-rating .rating-title {
@@ -466,7 +466,7 @@
 
         .bar-fill {
             height: 100%;
-            background: radial-gradient(circle at 30% 30%, #329cda, #14425d 70%);
+            background: radial-gradient(circle at 30% 30%, #8fc4e3, #14425d 70%);
             border-radius: 3px;
             transition: width 1.5s ease;
         }

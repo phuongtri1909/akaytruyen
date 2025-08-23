@@ -1,5 +1,5 @@
 <header class="header d-none d-lg-block">
-    <nav class="navbar navbar-expand-lg header__navbar p-md-0 header-custom">
+    <nav class="navbar navbar-expand-lg header__navbar p-1 header-custom">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
                 <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="Logo Suu Truyen" srcset=""
@@ -71,7 +71,7 @@
                     </ul>
                 </div>
 
-                <form class="d-flex header__form-search wuxia-search" action="{{ route('main.search.story') }}"
+                <form class="d-flex align-items-center header__form-search wuxia-search" action="{{ route('main.search.story') }}"
                     method="GET">
                     @php
                         $valueDefault = '';
@@ -189,7 +189,7 @@
 
                     </ul>
 
-                    <form class="d-flex header__form-search wuxia-search" action="{{ route('main.search.story') }}"
+                    <form class="d-flex align-items-center header__form-search wuxia-search" action="{{ route('main.search.story') }}"
                         method="GET">
                         @php
                             $valueDefault = '';
@@ -445,7 +445,7 @@
 
     .wuxia-search__input {
         border-radius: 12px;
-        border: 1px solid #329cda;
+        border: 1px solid #8fc4e3;
         background:
             linear-gradient(180deg, #fbf6e6 0%, #efe4c9 100%),
             repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
@@ -458,22 +458,22 @@
 
     .wuxia-search__submit {
         border-radius: 0 12px 12px 0;
-        border: 1px solid #329cda;
+        border: 1px solid #8fc4e3;
         border-left: 0;
-        background: radial-gradient(circle at 30% 30%, #329cda, #14425d 70%);
+        background: radial-gradient(circle at 30% 30%, #8fc4e3, #14425d 70%);
         color: #4c380b;
     }
 
     .dark-theme .wuxia-search__input {
         background: linear-gradient(180deg, #2c2a26 0%, #24221f 100%);
         color: #fff;
-        border-color: #329cda;
+        border-color: #8fc4e3;
     }
 
     .dark-theme .wuxia-search__submit {
         background: radial-gradient(circle at 30% 30%, #a58a36, #6b5a22 70%);
         color: #fff;
-        border-color: #329cda;
+        border-color: #8fc4e3;
     }
 
     .auth-buttons {

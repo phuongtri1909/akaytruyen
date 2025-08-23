@@ -1,14 +1,8 @@
 <div class="head-title-global d-flex justify-content-between mb-2">
     <div class="col-6 col-md-4 col-lg-4 head-title-global__left d-flex align-items-center">
-        <div class="scroll-title-stories">
-            <h2 class="ancient-title-stories">
-                <span class="title-text-stories text-black">{{ $title }}</span>
-                <div class="title-decoration-stories">
-                    <span class="decoration-line-stories left"></span>
-                    <span class="decoration-line-stories right"></span>
-                </div>
-            </h2>
-        </div>
+        @include('Frontend.snippets.title_component', [
+            'title' => $title,
+        ])
     </div>
 
     @if ($showSelect && count($selectOptions))

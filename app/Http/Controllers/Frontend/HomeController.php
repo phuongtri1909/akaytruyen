@@ -250,24 +250,30 @@ class HomeController extends Controller
         try {
             $searchTerm = $request->search;
 
-            // Lấy truyện theo slug
-            $story = Story::where('slug', $slug)->firstOrFail();
-            $storyId = $story->id;
+            // Lấy truyện theo slug - chỉ select fields cần thiết
+            $story = Story::select('id', 'slug', 'name')->where('slug', $slug)->firstOrFail();
 
             // ✅ Chuẩn hóa từ khóa
             $decodedSearchTerm = html_entity_decode($searchTerm, ENT_QUOTES, 'UTF-8');
             $cleanedSearchTerm = $this->cleanWordText($decodedSearchTerm);
             $normalizedSearchTerm = strtolower(trim($cleanedSearchTerm));
 
-            $query = Chapter::where('story_id', $storyId); // Chỉ tìm trong truyện hiện tại
+            // ✅ Tối ưu query - chỉ select fields cần thiết
+            $query = Chapter::select('id', 'story_id', 'slug', 'chapter', 'name', 'content', 'created_at')
+                ->where('story_id', $story->id);
 
             // Nếu có từ khóa, tiến hành tìm kiếm
             if (!empty($normalizedSearchTerm)) {
                 $searchNumber = preg_replace('/[^0-9]/', '', $normalizedSearchTerm);
 
                 $query->where(function ($q) use ($normalizedSearchTerm, $searchNumber) {
-                    $q->whereRaw("LOWER(CONVERT(name USING utf8mb4)) LIKE ?", ["%{$normalizedSearchTerm}%"])
-                        ->orWhereRaw("LOWER(CONVERT(content USING utf8mb4)) LIKE ?", ["%{$normalizedSearchTerm}%"]);
+                    // ✅ Tối ưu search - chỉ search trong name nếu content quá dài
+                    $q->whereRaw("LOWER(CONVERT(name USING utf8mb4)) LIKE ?", ["%{$normalizedSearchTerm}%"]);
+
+                    // Chỉ search content nếu từ khóa ngắn (tránh search quá chậm)
+                    if (strlen($normalizedSearchTerm) <= 50) {
+                        $q->orWhereRaw("LOWER(CONVERT(content USING utf8mb4)) LIKE ?", ["%{$normalizedSearchTerm}%"]);
+                    }
 
                     if ($searchNumber !== '') {
                         $q->orWhere('chapter', $searchNumber);
@@ -275,15 +281,16 @@ class HomeController extends Controller
                 });
             }
 
-            // Lấy danh sách chương
-            $chapters = $query->orderBy('created_at', 'desc')
+            // ✅ Lấy danh sách chương với eager loading story và pagination tối ưu
+            $chapters = $query->with(['story' => function($q) {
+                    $q->select('id', 'slug', 'name');
+                }])
                 ->orderBy('chapter', 'desc')
-                ->get();
-            // Sắp xếp và phân trang 50 chương mỗi trang
-            $chapters = $query->orderBy('chapter', 'desc')->paginate(50);
-            // Trả về kết quả dạng HTML
+                ->paginate(50);
+
+            // ✅ Trả về kết quả dạng HTML với story slug
             return response()->json([
-                'html' => view('Frontend.components.search-results', compact('chapters'))->render()
+                'html' => view('Frontend.components.search-results', compact('chapters', 'story'))->render()
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
