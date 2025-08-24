@@ -62,18 +62,27 @@
 @endif
 
 <div class="floating-wuxia-social m-3 mb-5">
-    <a href="https://youtube.com/@AkayTruyen?sub_confirmation=1" target="_blank" rel="noreferrer"
-        class="wuxia-social wuxia-social--yt text-white" aria-label="Youtube">
-        <i class="fa-brands fa-youtube"></i>
-    </a>
-    <a href="https://www.facebook.com/groups/1134210028188278/" target="_blank" rel="noreferrer"
-        class="wuxia-social wuxia-social--fb text-white" aria-label="Facebook">
-        <i class="fa-brands fa-facebook-f"></i>
-    </a>
-    <a href="https://discord.gg/yourInviteCode" target="_blank" rel="noreferrer"
-        class="wuxia-social wuxia-social--dc  mb-4 text-white" aria-label="Discord">
-        <i class="fa-brands fa-discord"></i>
-    </a>
+    <!-- Social Buttons Container -->
+    <div class="social-buttons-container" id="socialContainer">
+        <a href="https://youtube.com/@AkayTruyen?sub_confirmation=1" target="_blank" rel="noreferrer"
+            class="wuxia-social wuxia-social--yt text-white" aria-label="Youtube">
+            <i class="fa-brands fa-youtube"></i>
+        </a>
+        <a href="https://www.facebook.com/groups/1134210028188278/" target="_blank" rel="noreferrer"
+            class="wuxia-social wuxia-social--fb text-white" aria-label="Facebook">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="https://discord.gg/yourInviteCode" target="_blank" rel="noreferrer"
+            class="wuxia-social wuxia-social--dc text-white" aria-label="Discord">
+            <i class="fa-brands fa-discord"></i>
+        </a>
+    </div>
+
+    <!-- Toggle Button với hiệu ứng nhấp nháy -->
+    <button class="social-toggle-btn" id="socialToggle" aria-label="Mở/Đóng mạng xã hội">
+        <i class="fa-solid fa-share-nodes"></i>
+        <div class="pulse-ring"></div>
+    </button>
 </div>
 
 
@@ -240,10 +249,87 @@
     .floating-wuxia-social {
         position: fixed;
         right: 0;
-        bottom: 0;
+        bottom: 25px;
         z-index: 1050;
-        display: grid;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
         gap: 10px;
+    }
+
+    /* Toggle Button với hiệu ứng nhấp nháy */
+    .social-toggle-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 1px solid #caa83b;
+        background: radial-gradient(circle at 30% 30%, #ffe8a6, #d4af37 70%);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, .2), inset 0 0 0 1px rgba(255, 255, 255, .4);
+        color: #5c3e06;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform .2s ease, box-shadow .2s ease;
+        position: relative;
+        cursor: pointer;
+        z-index: 1051;
+    }
+
+    .social-toggle-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 22px rgba(0, 0, 0, .25), inset 0 0 0 1px rgba(255, 255, 255, .5);
+    }
+
+    .social-toggle-btn.active {
+        transform: rotate(180deg);
+    }
+
+    .social-toggle-btn.active:hover {
+        transform: rotate(180deg) translateY(-2px);
+    }
+
+    /* Hiệu ứng nhấp nháy */
+    .pulse-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 2px solid #ff6b6b;
+        animation: pulse 2s infinite;
+        pointer-events: none;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.2);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(1.4);
+            opacity: 0;
+        }
+    }
+
+    /* Social Buttons Container */
+    .social-buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        transform: translateX(100%);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    .social-buttons-container.active {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: auto;
     }
 
     .wuxia-social {
@@ -257,6 +343,22 @@
         text-decoration: none;
         box-shadow: 0 8px 18px rgba(0, 0, 0, .25);
         transition: transform .2s ease, box-shadow .2s ease;
+        animation: slideInRight 0.3s ease forwards;
+    }
+
+    .wuxia-social:nth-child(1) { animation-delay: 0.1s; }
+    .wuxia-social:nth-child(2) { animation-delay: 0.2s; }
+    .wuxia-social:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
     }
 
     .wuxia-social:hover {
@@ -290,6 +392,47 @@
         background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
         color: #f0d98c;
         border-color: #caa83b;
+    }
+
+    /* Dark theme cho social buttons */
+    .dark-theme .social-toggle-btn {
+        background: radial-gradient(circle at 30% 30%, #4a4a4a, #2a2a2a 70%);
+        border-color: #caa83b;
+        color: #f0d98c;
+    }
+
+    .dark-theme .pulse-ring {
+        border-color: #ff6b6b;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .floating-wuxia-social {
+            right: 10px;
+            bottom: 10px;
+        }
+
+        .social-toggle-btn,
+        .wuxia-social {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+
+        .social-buttons-container {
+            gap: 8px;
+        }
+    }
+
+    /* Hiệu ứng loading cho social buttons */
+    .wuxia-social {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    .social-buttons-container.active .wuxia-social {
+        opacity: 1;
+        transform: translateX(0);
     }
 </style>
 
@@ -497,5 +640,51 @@
                 }
             }
         });
+
+        // Social Toggle Functionality
+        var socialToggle = document.getElementById('socialToggle');
+        var socialContainer = document.getElementById('socialContainer');
+
+        if (socialToggle && socialContainer) {
+            // Lấy trạng thái từ localStorage
+            var isSocialOpen = localStorage.getItem('socialOpen') === 'true';
+
+            // Áp dụng trạng thái ban đầu
+            if (isSocialOpen) {
+                socialContainer.classList.add('active');
+                socialToggle.classList.add('active');
+            }
+
+            socialToggle.addEventListener('click', function() {
+                socialContainer.classList.toggle('active');
+                socialToggle.classList.toggle('active');
+
+                // Lưu trạng thái vào localStorage
+                var isOpen = socialContainer.classList.contains('active');
+                localStorage.setItem('socialOpen', isOpen);
+
+                // Thêm hiệu ứng click
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+
+            // Tự động ẩn sau 5 giây nếu không tương tác
+            var hideTimeout;
+            socialContainer.addEventListener('mouseenter', function() {
+                clearTimeout(hideTimeout);
+            });
+
+            socialContainer.addEventListener('mouseleave', function() {
+                if (socialContainer.classList.contains('active')) {
+                    hideTimeout = setTimeout(function() {
+                        socialContainer.classList.remove('active');
+                        socialToggle.classList.remove('active');
+                        localStorage.setItem('socialOpen', 'false');
+                    }, 5000);
+                }
+            });
+        }
     })();
 </script>
