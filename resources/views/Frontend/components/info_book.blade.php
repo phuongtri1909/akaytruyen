@@ -319,7 +319,7 @@
         /* Compact Stats Design */
         .compact-stats {
             background: #ffffff;
-            border: 2px solid #14425d;
+            border: 2px dashed #14425d;
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 5px 15px #8fc4e3;
@@ -332,7 +332,7 @@
             text-align: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #14425d;
+            border-bottom: 2px dashed #14425d;
         }
 
         .stats-row {
@@ -402,7 +402,7 @@
         /* Compact Rating Design */
         .compact-rating {
             background: #ffffff;
-            border: 2px solid #14425d;
+            border: 2px dashed #14425d;
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 5px 15px #8fc4e3;
@@ -415,7 +415,7 @@
             text-align: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #14425d;
+            border-bottom: 2px dashed #14425d;
         }
 
         .rating-content {
