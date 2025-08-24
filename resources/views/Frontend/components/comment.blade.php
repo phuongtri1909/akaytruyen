@@ -1,252 +1,303 @@
 @push('styles')
 <style>
-        .blog-comment ul.comments ul {
-            position: relative;
+    /* Compact Comment Section Styles */
+    .comment-section {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 1.5rem 0 ;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        margin: 1.5rem 0;
+    }
+
+    .comment-section h5 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    /* Comment Input */
+    .comment-input-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-floating.submit-comment {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    .form-floating.submit-comment .form-control {
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        resize: none;
+    }
+
+    .form-floating.submit-comment .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.1);
+    }
+
+    .btn-send-comment {
+        position: absolute;
+        right: 6px;
+        bottom: 6px;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #007bff;
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    .btn-send-comment:hover {
+        transform: scale(1.05);
+        background: #0056b3;
+    }
+
+    .btn-send-comment:disabled {
+        background: #6c757d;
+        transform: none;
+    }
+
+    /* Comments List */
+    .blog-comment {
+        margin-top: 1.5rem;
+    }
+
+    .blog-comment ul.comments ul:before {
+        left: -12px;
+        border-left: 2px solid #e9ecef;
+    }
+
+    .blog-comment ul.comments ul li:before {
+        left: -12px;
+        top: 20px;
+        width: 12px;
+        border-top: 2px solid #e9ecef;
+    }
+
+    /* Meta Info */
+    .meta {
+        font-size: 0.85rem;
+        color: #6c757d;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+
+    /* Reply Form */
+    .reply-form {
+        margin: 0.75rem 0;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 3px solid #007bff;
+        animation: slideInDown 0.3s ease-out;
+    }
+
+    .reply-form .form-control {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        font-size: 0.85rem;
+    }
+
+    .submit-reply {
+        background: #007bff;
+        border: none;
+        border-radius: 15px;
+        padding: 0.4rem 1rem;
+        color: white;
+        font-weight: 500;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .submit-reply:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+    }
+
+    /* Mention System */
+    .mention-list {
+        position: absolute;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        width: 200px;
+        max-height: 150px;
+        overflow-y: auto;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 0.25rem 0;
+        display: none;
+        z-index: 1000;
+        animation: slideInUp 0.2s ease-out;
+    }
+
+    .mention-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 4px;
+        margin: 0 0.25rem;
+        font-size: 0.8rem;
+    }
+
+    .mention-item:hover {
+        background: #f8f9fa;
+        transform: translateX(3px);
+    }
+
+    /* Load More */
+    .load-more-container {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .btn-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background: white;
+        border: 1px solid #007bff;
+        transition: all 0.3s ease;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+
+    .btn-link:hover {
+        background: #007bff;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    /* Animations */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
         }
-
-        .blog-comment ul.comments ul:before {
-            content: '';
-            position: absolute;
-            left: -25px;
-            top: 0;
-            height: 100%;
-            border-left: 2px solid #eee;
-        }
-
-        .blog-comment ul.comments ul li:before {
-            content: '';
-            position: absolute;
-            left: -25px;
-            top: 20px;
-            width: 25px;
-            border-top: 2px solid #eee;
-        }
-
-        .blog-comment ul.comments ul li {
-            position: relative;
-        }
-
-        @media (max-width: 768px) {
-
-            .blog-comment ul.comments ul:before {
-                left: -10px;
-            }
-
-            .blog-comment ul.comments ul li:before {
-                left: -10px;
-                width: 10px;
-            }
-        }
-
-        /* comment */
-        .blog-comment::before,
-        .blog-comment::after,
-        .blog-comment-form::before,
-        .blog-comment-form::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        .blog-comment ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .blog-comment img {
+        to {
             opacity: 1;
-            filter: Alpha(opacity=100);
-            -webkit-border-radius: 4px;
-            -moz-border-radius: 4px;
-            -o-border-radius: 4px;
-            border-radius: 4px;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+
+        .comment-section h5 {
+            font-size: 1.1rem;
         }
 
-        .blog-comment img.avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
+        .meta {
+            font-size: 0.8rem;
+            gap: 0.25rem;
         }
 
-        .blog-comment img.avatar-reply {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
+        .role-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
         }
 
-        @media (max-width: 768px) {
-            .blog-comment img.avatar {
-                width: 35px;
-                height: 35px;
-            }
-
-            .blog-comment img.avatar-reply {
-                width: 25px;
-                height: 25px;
-            }
+        .comment-actions {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
         }
 
-        .blog-comment .post-comments {
-
-            background: #fff;
-
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        .blog-comment .post-comments .content-post-comments {
-            border: 1px solid #eee;
-            border-radius: 15px;
-            padding: 5px;
-        }
-
-        .blog-comment .meta {
-            font-size: 13px;
-            color: #aaa;
-            padding-bottom: 8px;
-            margin-bottom: 10px !important;
-            border-bottom: 1px solid #eee;
-        }
-
-
-
-        .blog-comment-form {
-            padding-left: 15%;
-            padding-right: 15%;
-            padding-top: 40px;
-        }
-
-        .blog-comment h3,
-        .blog-comment-form h3 {
-            margin-bottom: 40px;
-            font-size: 26px;
-            line-height: 30px;
-            font-weight: 800;
-        }
-
-        .submit-comment {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .btn-send-comment {
-            position: absolute;
-            right: 12px;
-            bottom: 8px;
+        .reaction-group {
+            left: -80px;
+            max-width: 250px;
         }
 
         .reaction-btn {
-            padding: 4px 8px;
-            font-size: 12px;
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
         }
 
         .reply-form {
-            margin: 10px 0;
+            padding: 0.5rem;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .blog-comment .post-comments {
-                padding: 10px !important;
-            }
-
-            .blog-comment img.avatar {
-                width: 35px;
-                height: 35px;
-            }
-
-            .reaction-btn {
-                padding: 2px 6px;
-            }
-
-            .btn-send-comment {
-                bottom: 4px;
-            }
-
-            .meta {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 5px;
-                align-items: center;
-            }
-
-            .meta .pull-right {
-                margin-left: auto;
-            }
+        .blog-comment ul.comments ul:before {
+            left: -8px;
         }
-        .mention-list {
-    position: absolute;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    width: 250px;
-    max-height: 200px;
-    overflow-y: auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 5px 0;
-    display: none;
-    z-index: 1000;
-}
 
-.mention-item {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.mention-item:hover {
-    background: #f5f5f5;
-}
-
-.mention-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    margin-right: 10px;
-}
-
-.mention-name {
-    font-weight: 600;
-    color: #333;
-}
-
-
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.css">
-
-
+        .blog-comment ul.comments ul li:before {
+            left: -8px;
+            width: 8px;
+        }
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.css">
 @endpush
-<section id="comments" class="my-3 my-md-5">
+<section id="comments" class="comment-section">
     <div class="container px-2 px-md-3">
-        <h5 class="mb-3">BÌNH LUẬN TRUYỆN</h5>
+        <h5 class="mb-3">💬 BÌNH LUẬN TRUYỆN</h5>
         <div class="row">
             <div class="col-12">
-                <div class="form-floating submit-comment">
-                    <textarea class="form-control" id="comment-input" placeholder="Nhập bình luận..." rows="2" maxlength="700"></textarea>
-                    <label for="comment-input">Bình luận</label>
-                    <button class="btn btn-sm btn-outline-info btn-send-comment" id="btn-comment" value="{{ $chapter->id ?? '' }}">
-                        <i class="fa-regular fa-paper-plane"></i>
-                    </button>
+                <div class="comment-input-container">
+                    <div class="form-floating submit-comment">
+                        <textarea class="form-control" id="comment-input" placeholder="Chia sẻ suy nghĩ của bạn..." rows="2" maxlength="700"></textarea>
+                        <label for="comment-input">✍️ Viết bình luận...</label>
+                        <button class="btn btn-sm btn-send-comment" id="btn-comment" value="{{ $chapter->id ?? '' }}">
+                            <i class="fa-regular fa-paper-plane"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="blog-comment">
-                    <ul class="comments mb-0" id="comments-list">
+                    <ul class="comments mb-0 px-0" id="comments-list">
                         @include('Frontend.components.comments-list', ['pinnedComments' => $pinnedComments, 'regularComments' => $regularComments])
                     </ul>
                 </div>
 
                 @if (method_exists($regularComments, 'hasMorePages') && $regularComments->hasMorePages())
-    <div class="text-center mt-3">
-        <button class="btn btn-link" id="load-more-comments" data-next-page="{{ $regularComments->nextPageUrl() }}">
-            Xem thêm bình luận...
-        </button>
-    </div>
-@endif
-
+                    <div class="load-more-container">
+                        <button class="btn btn-link" id="load-more-comments" data-next-page="{{ $regularComments->nextPageUrl() }}">
+                            📄 Xem thêm bình luận...
+                        </button>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -295,7 +346,7 @@
             $('#btn-comment').click(function() {
     const chapter_id = window.location.pathname.split('/').pop(); // lấy ID từ URL
     console.log("Chapter ID:", chapter_id);
-    
+
     let reply_id = $(this).data("reply-id") || null;
 
     const btn = $(this);
