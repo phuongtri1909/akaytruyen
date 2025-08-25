@@ -163,7 +163,6 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-top: 15px;
             }
 
             .char-counter {
@@ -229,7 +228,7 @@
 
             /* Comment List */
             .modern-comment-list {
-                max-height: 600px;
+                max-height: 700px;
                 overflow-y: auto;
                 padding-right: 10px;
                 scrollbar-width: thin;

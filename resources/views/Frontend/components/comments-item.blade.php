@@ -262,9 +262,11 @@
                 <!-- Comment Content -->
                 <div class="comment-content mb-3" id="comment-{{ $comment->id }}">
                     @if ($comment->user && $comment->user->hasRole('VIP SIÊU VIỆT'))
-                        <span class="vip-super-role">{!! nl2br(e($comment->comment)) !!}</span>
+                        <div class="vip-super-role" data-text="{{ strip_tags($comment->comment) }}">
+                            {!! \App\Helpers\Helper::parseLinks($comment->comment) !!}
+                        </div>
                     @else
-                        {!! nl2br(e($comment->comment)) !!}
+                        {!! \App\Helpers\Helper::parseLinks($comment->comment) !!}
                     @endif
                 </div>
 
@@ -848,12 +850,36 @@
                 overflow-wrap: break-word;
             }
 
-            .vip-super-role {
+                                                .vip-super-role {
                 font-size: 1rem;
                 font-weight: 600;
+                position: relative;
+            }
+
+            .vip-super-role::before {
+                content: attr(data-text);
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
                 background: linear-gradient(135deg, #005f99, #87cefa, #00cc66);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
+                background-clip: text;
+                pointer-events: none;
+                z-index: 1;
+            }
+
+            .vip-super-role img,
+            .vip-super-role .emoji,
+            .vip-super-role a {
+                position: relative;
+                z-index: 2;
+                background: none !important;
+                -webkit-text-fill-color: unset !important;
+                filter: none !important;
+                display: inline-block;
             }
 
             /* Actions */

@@ -358,7 +358,7 @@ class Helper
         $emojiPattern = '/[\x{1F000}-\x{1FFFF}|\x{2600}-\x{27BF}|\x{1F900}-\x{1F9FF}|\x{2B50}|\x{2705}]/u';
         $text = preg_replace_callback($emojiPattern, fn($m) => '<span class="emoji">'.$m[0].'</span>', $text);
 
-        return nl2br('<span class="text">'.$text.'</span>');
+        return nl2br($text);
     }
 
     public static function getVietnameseMonth($month) {
