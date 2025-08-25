@@ -506,11 +506,6 @@
                 font-size: 20px;
             }
 
-            .stars-line {
-                flex-direction: column;
-                gap: 10px;
-            }
-
             .rating-score {
                 margin-left: 0;
             }
