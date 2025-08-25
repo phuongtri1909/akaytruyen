@@ -29,15 +29,21 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
                 'parent:id,reply_id,user_id',
                 'parent.user:id,name,email,avatar,role',
                 'parent.user.roles:id,name,guard_name',
+                'editor:id,name,email,avatar,role',
+                'editHistories.editor:id,name,email,avatar,role',
                 'replies' => function($query) {
                     $query->with([
                         'user:id,name,email,avatar,role',
                         'user.roles:id,name,guard_name',
+                        'editor:id,name,email,avatar,role',
+                        'editHistories.editor:id,name,email,avatar,role',
                         'reactions:id,comment_id,type,user_id',
                         'replies' => function($subQuery) {
                             $subQuery->with([
                                 'user:id,name,email,avatar,role',
                                 'user.roles:id,name,guard_name',
+                                'editor:id,name,email,avatar,role',
+                                'editHistories.editor:id,name,email,avatar,role',
                                 'reactions:id,comment_id,type,user_id'
                             ])->latest();
                         }

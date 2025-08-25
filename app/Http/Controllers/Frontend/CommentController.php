@@ -251,7 +251,7 @@ class CommentController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Không tìm thấy bình luận này'], 404);
         }
 
-        if ($authUser->hasRole('Admin') ||
+        if ($authUser->hasRole('Admin') || $authUser->hasRole('Content') ||
         ($authUser->hasRole('Mod') && (!$comment->user || !$comment->user->hasRole('Admin')))) {
         $comment->delete();
         return response()->json(['status' => 'success', 'message' => 'Xóa bình luận thành công']);

@@ -17,6 +17,7 @@ use App\Http\Controllers\Frontend\{
     UserController,
     CommentController,
     CommentReactionController,
+    CommentEditController,
     LivechatController,
     NotificationController,
     SitemapController,
@@ -62,6 +63,9 @@ Route::get('/test-cache', [StoryController::class, 'testCache'])->name('test.cac
 Route::get('/tim-kiem', [HomeController::class, 'mainSearchStory'])->name('main.search.story');
 Route::get('/phan-loai-theo-chuong', [StoryController::class, 'followChaptersCount'])->name('get.list.story.with.chapters.count');
 Route::delete('/delete-tagged-notification/{notificationId}', [NotificationController::class, 'deleteTaggedNotification']);
+
+// Route xem lịch sử edit comment (không cần đăng nhập)
+Route::get('/comments/{comment}/edit-history', [CommentEditController::class, 'getEditHistory'])->name('comments.edit.history');
 
 // Sitemap Routes
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
@@ -167,6 +171,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Route ghim comment (pin/unpin)
     Route::post('/comments/{comment}/pin', [CommentController::class, 'togglePin'])->name('comments.pin');
+
+    // Routes cho edit comment
+    Route::get('/comments/{comment}/edit-form', [CommentEditController::class, 'getEditForm'])->name('comments.edit.form');
+    Route::post('/comments/{comment}/edit', [CommentEditController::class, 'edit'])->name('comments.edit');
 
     // Route xóa nhiều users cùng lúc
     Route::post('/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('admin.users.bulkDelete');

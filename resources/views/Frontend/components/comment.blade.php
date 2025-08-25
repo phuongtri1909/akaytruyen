@@ -303,6 +303,8 @@
     </div>
 </section>
 
+@include('Frontend.components.comment-edit-history-modal')
+
 @push('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function () {

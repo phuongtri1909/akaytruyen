@@ -239,7 +239,7 @@
                     <!-- Admin Actions -->
                     <div class="admin-actions">
                         {{-- Nút xóa comment nếu user có quyền --}}
-                        @if ($comment->level == 0 && auth()->check() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Mod')))
+                        @if ($comment->level == 0 && auth()->check() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Mod') || auth()->user()->hasRole('Content')))
                             <span class="delete-comment text-danger ms-2" style="cursor: pointer;"
                                 data-id="{{ $comment->id }}" title="Xóa bình luận">
                                 <i class="fas fa-trash-alt"></i>
@@ -268,6 +268,17 @@
                     @else
                         {!! \App\Helpers\Helper::parseLinks($comment->comment) !!}
                     @endif
+
+                    @if ($comment->is_edited)
+                        <div class="edited-badge">
+                            <small class="text-muted">
+                                <i class="fa-solid fa-edit"></i> Đã chỉnh sửa
+                                @if ($comment->edited_at)
+                                    {{ $comment->edited_at->locale('vi')->diffForHumans() }}
+                                @endif
+                            </small>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Comment Actions -->
@@ -281,6 +292,20 @@
                             <button class="reply-btn" style="cursor: pointer;"
                                 data-id="{{ $comment->id }}">
                                 <i class="fa-solid fa-reply"></i> Trả lời
+                            </button>
+                        @endif
+
+                        @if (auth()->check() && auth()->id() === $comment->user_id)
+                            <button class="edit-btn" style="cursor: pointer;"
+                                data-id="{{ $comment->id }}" title="Chỉnh sửa bình luận">
+                                <i class="fa-solid fa-edit"></i> Sửa
+                            </button>
+                        @endif
+
+                        @if ($comment->is_edited)
+                            <button class="history-btn" style="cursor: pointer;"
+                                data-id="{{ $comment->id }}" title="Xem lịch sử chỉnh sửa">
+                                <i class="fa-solid fa-history"></i> Lịch sử
                             </button>
                         @endif
                     </div>
@@ -682,6 +707,189 @@
                     }, 300); // delay 300ms
                 }
             });
+
+            // Edit Comment Functions
+            $(document).on('click', '.edit-btn', function() {
+                const commentId = $(this).data('id');
+                const commentItem = $(this).closest('.comment-item-wrapper');
+
+                // Ẩn tất cả form edit khác
+                $('.comment-edit-form').remove();
+
+                // Hiển thị loading
+                commentItem.append('<div class="edit-loading text-center p-3"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>');
+
+                $.ajax({
+                    url: `/comments/${commentId}/edit-form`,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            commentItem.find('.edit-loading').remove();
+                            commentItem.append(response.html);
+
+                            // Focus vào textarea
+                            setTimeout(() => {
+                                commentItem.find('.edit-comment-textarea').focus();
+                            }, 100);
+                        } else {
+                            showToast(response.message, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        commentItem.find('.edit-loading').remove();
+                        showToast('Có lỗi xảy ra', 'error');
+                    }
+                });
+            });
+
+            // Submit edit form
+            window.submitEditForm = function(event, commentId) {
+                event.preventDefault();
+                const form = $(event.target);
+                const submitBtn = form.find('button[type="submit"]');
+                const originalText = submitBtn.html();
+
+                submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
+
+                const formData = {
+                    comment: form.find('textarea[name="comment"]').val(),
+                    edit_reason: form.find('input[name="edit_reason"]').val(),
+                    _token: '{{ csrf_token() }}'
+                };
+
+                $.ajax({
+                    url: `/comments/${commentId}/edit`,
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.status === 'success') {
+                                                        // Cập nhật nội dung comment
+                            const commentItem = $(`.comment-item-wrapper[data-comment-id="${commentId}"]`);
+                            const commentContent = commentItem.find('.comment-content');
+
+                            // Cập nhật nội dung (giữ lại cấu trúc VIP nếu có)
+                            const vipRole = commentContent.find('.vip-super-role');
+                            if (vipRole.length > 0) {
+                                vipRole.attr('data-text', response.comment.comment);
+                                vipRole.html(response.comment.comment);
+                            } else {
+                                commentContent.html(response.comment.comment);
+                            }
+
+                            // Thêm badge edited nếu chưa có
+                            if (!commentItem.find('.edited-badge').length) {
+                                commentContent.append(`
+                                    <div class="edited-badge">
+                                        <small class="text-muted">
+                                            <i class="fa-solid fa-edit"></i> Đã chỉnh sửa vừa xong
+                                        </small>
+                                    </div>
+                                `);
+                            }
+
+                            // Thêm nút history nếu chưa có
+                            if (!commentItem.find('.history-btn').length) {
+                                commentItem.find('.left-actions').append(`
+                                    <button class="history-btn" style="cursor: pointer;"
+                                        data-id="${commentId}" title="Xem lịch sử chỉnh sửa">
+                                        <i class="fa-solid fa-history"></i> Lịch sử
+                                    </button>
+                                `);
+                            }
+
+                            // Xóa form edit
+                            commentItem.find('.comment-edit-form').remove();
+
+                            showToast(response.message, 'success');
+                        } else {
+                            showToast(response.message, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            showToast(xhr.responseJSON.message, 'error');
+                        } else {
+                            showToast('Có lỗi xảy ra', 'error');
+                        }
+                    },
+                    complete: function() {
+                        submitBtn.prop('disabled', false).html(originalText);
+                    }
+                });
+            };
+
+            // Close edit form
+            window.closeEditForm = function(commentId) {
+                $(`.comment-item-wrapper[data-comment-id="${commentId}"] .comment-edit-form`).remove();
+            };
+
+            // View edit history
+            $(document).on('click', '.history-btn', function() {
+                const commentId = $(this).data('id');
+
+                $.ajax({
+                    url: `/comments/${commentId}/edit-history`,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            let html = '';
+
+                            if (response.edit_histories.length > 0) {
+                                response.edit_histories.forEach(history => {
+                                    html += `
+                                        <div class="edit-history-item">
+                                            <div class="edit-history-header">
+                                                <div class="edit-history-meta">
+                                                    <span class="edit-history-editor">${history.editor.name}</span>
+                                                    <span class="edit-history-time">${history.edited_at}</span>
+                                                </div>
+                                            </div>
+                                            ${history.edit_reason ? `<div class="edit-history-reason">Lý do: ${history.edit_reason}</div>` : ''}
+                                            <div class="edit-history-content">
+                                                <div class="content-label">Nội dung cũ:</div>
+                                                <div class="content-text content-old">${history.old_content}</div>
+                                                <div class="content-label mt-2">Nội dung mới:</div>
+                                                <div class="content-text content-new">${history.new_content}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            } else {
+                                html = `
+                                    <div class="edit-history-empty">
+                                        <i class="fas fa-history"></i>
+                                        <p>Chưa có lịch sử chỉnh sửa</p>
+                                    </div>
+                                `;
+                            }
+
+                            $('#editHistoryContent').html(html);
+                            new bootstrap.Modal(document.getElementById('editHistoryModal')).show();
+                        } else {
+                            showToast(response.message, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        showToast('Có lỗi xảy ra', 'error');
+                    }
+                });
+            });
+
+            // Character count for edit textarea
+            $(document).on('input', '.edit-comment-textarea', function() {
+                const textarea = $(this);
+                const charCount = textarea.val().length;
+                const countDisplay = textarea.closest('.form-group').find('.current-count');
+                countDisplay.text(charCount);
+
+                if (charCount > 650) {
+                    countDisplay.css('color', '#dc3545');
+                } else if (charCount > 600) {
+                    countDisplay.css('color', '#ffc107');
+                } else {
+                    countDisplay.css('color', '#6c757d');
+                }
+            });
         </script>
 
 
@@ -927,6 +1135,59 @@
             .reply-btn:hover {
                 background: rgba(0, 123, 255, 0.1);
                 color: #0056b3;
+            }
+
+            .edit-btn {
+                color: #28a745;
+                font-size: 0.8rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                padding: 0.25rem 0.5rem;
+                border-radius: 12px;
+                text-decoration: none;
+                border: 1px solid #28a745;
+                background: transparent;
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .edit-btn:hover {
+                background: rgba(40, 167, 69, 0.1);
+                color: #1e7e34;
+            }
+
+            .history-btn {
+                color: #6f42c1;
+                font-size: 0.8rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                padding: 0.25rem 0.5rem;
+                border-radius: 12px;
+                text-decoration: none;
+                border: 1px solid #6f42c1;
+                background: transparent;
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .history-btn:hover {
+                background: rgba(111, 66, 193, 0.1);
+                color: #5a32a3;
+            }
+
+            .edited-badge {
+                margin-top: 0.5rem;
+                padding-top: 0.5rem;
+                border-top: 1px solid #e9ecef;
+            }
+
+            .edited-badge small {
+                font-size: 0.75rem;
+                opacity: 0.8;
             }
 
             /* Reaction System - Fixed */
