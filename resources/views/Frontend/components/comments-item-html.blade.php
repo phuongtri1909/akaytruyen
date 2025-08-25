@@ -404,23 +404,3 @@
         </div>
     </li>
 </div>
-
-<!-- Add Modal template -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">⚠️ Xác nhận xóa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Bạn có chắc muốn xóa bình luận này?</p>
-                <p class="text-muted small">Hành động này không thể hoàn tác.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">❌ Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">🗑️ Xóa</button>
-            </div>
-        </div>
-    </div>
-</div>
