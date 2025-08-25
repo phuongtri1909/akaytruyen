@@ -194,7 +194,7 @@ class CommentController extends Controller
             'status' => 'success',
             'message' => 'Đã thêm bình luận',
             'comment' => $comment->load('user'),
-            'html' => view('Frontend.components.comments-item', compact('comment'))->render()
+            'html' => view('Frontend.components.comments-item-html', compact('comment'))->render()
         ]);
     }
     /**

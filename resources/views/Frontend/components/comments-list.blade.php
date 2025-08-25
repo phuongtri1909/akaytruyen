@@ -10,7 +10,7 @@
             </div>
             <div class="pinned-comments">
                 @foreach($pinnedComments as $comment)
-                    @include('Frontend.components.comments-item', ['comment' => $comment])
+                    @include('Frontend.components.comments-item-html', ['comment' => $comment])
                 @endforeach
             </div>
         </div>
@@ -26,7 +26,7 @@
             @endif
             <div class="regular-comments">
                 @foreach($regularComments as $comment)
-                    @include('Frontend.components.comments-item', ['comment' => $comment])
+                    @include('Frontend.components.comments-item-html', ['comment' => $comment])
                 @endforeach
             </div>
         </div>

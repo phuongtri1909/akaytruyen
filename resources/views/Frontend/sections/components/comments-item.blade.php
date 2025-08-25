@@ -114,7 +114,7 @@
                         auth()->user()->roles->contains('name', 'Mod')
                     )
                 )
-                    <span class="delete-comment text-danger ms-2" style="cursor: pointer;" data-id="{{ $comment->id }}">
+                    <span class="livechat-delete-comment text-danger ms-2" style="cursor: pointer;" data-id="{{ $comment->id }}">
                         <i class="fas fa-times"></i>
                     </span>
                 @endif
@@ -123,7 +123,7 @@
                         auth()->user()->roles->contains('name', 'Admin') ||
                         auth()->user()->roles->contains('name', 'Mod')
                     ))
-                    <button class="btn btn-sm pin-comment ms-2" data-id="{{ $comment->id }}">
+                    <button class="btn btn-sm livechat-pin-comment ms-2" data-id="{{ $comment->id }}">
                         @if($comment->is_pinned)
                             <i class="fas fa-thumbtack text-warning" title="Bỏ ghim"></i>
                         @else
@@ -148,7 +148,7 @@
 
 
 <!-- Add Modal template -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
+<div class="modal fade" id="livechatDeleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -160,7 +160,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+                <button type="button" class="btn btn-danger" id="livechatConfirmDelete">Xóa</button>
             </div>
         </div>
     </div>
@@ -170,7 +170,7 @@
     @push('scripts')
         {{-- Ghim comment --}}
         <script>
-            $(document).on('click', '.pin-comment', function() {
+            $(document).on('click', '.livechat-pin-comment', function() {
                 const btn = $(this);
                 const commentId = btn.data('id');
 
@@ -200,14 +200,14 @@
         <script>
             $(document).ready(function() {
                 let commentToDelete = null;
-                const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                const deleteModal = new bootstrap.Modal(document.getElementById('livechatDeleteModal'));
 
-                $('body').on('click', '.delete-comment', function() {
+                $('body').on('click', '.livechat-delete-comment', function() {
                     commentToDelete = $(this).data('id');
                     deleteModal.show();
                 });
 
-                $('#confirmDelete').click(function() {
+                $('#livechatConfirmDelete').click(function() {
                     if (!commentToDelete) return;
 
                     $.ajax({
@@ -237,7 +237,7 @@
 
         <!-- Add existing delete modal scripts first -->
         <script>
-            $('.reaction-btn').click(function() {
+            $('.livechat-reaction-btn').click(function() {
                 const btn = $(this);
                 const commentId = btn.data('id');
                 const type = btn.data('type');

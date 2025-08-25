@@ -1,274 +1,7 @@
 @push('styles')
-<style>
-    /* Compact Comment Section Styles */
-    .comment-section {
-        background: #f8f9fa;
-        border-radius: 15px;
-        padding: 1.5rem 0 ;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        margin: 1.5rem 0;
-    }
-
-    .comment-section h5 {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-
-    /* Comment Input */
-    .comment-input-container {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-floating.submit-comment {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-    }
-
-    .form-floating.submit-comment .form-control {
-        border: 1px solid #e9ecef;
-        border-radius: 12px;
-        padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        resize: none;
-    }
-
-    .form-floating.submit-comment .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.1);
-    }
-
-    .btn-send-comment {
-        position: absolute;
-        right: 6px;
-        bottom: 6px;
-        border-radius: 50%;
-        width: 35px;
-        height: 35px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #007bff;
-        border: none;
-        color: white;
-        transition: all 0.3s ease;
-        z-index: 10;
-    }
-
-    .btn-send-comment:hover {
-        transform: scale(1.05);
-        background: #0056b3;
-    }
-
-    .btn-send-comment:disabled {
-        background: #6c757d;
-        transform: none;
-    }
-
-    /* Comments List */
-    .blog-comment {
-        margin-top: 1.5rem;
-    }
-
-    .blog-comment ul.comments ul:before {
-        left: -12px;
-        border-left: 2px solid #e9ecef;
-    }
-
-    .blog-comment ul.comments ul li:before {
-        left: -12px;
-        top: 20px;
-        width: 12px;
-        border-top: 2px solid #e9ecef;
-    }
-
-    /* Meta Info */
-    .meta {
-        font-size: 0.85rem;
-        color: #6c757d;
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.75rem;
-        border-bottom: 1px solid #e9ecef;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-
-    /* Reply Form */
-    .reply-form {
-        margin: 0.75rem 0;
-        padding: 0.75rem;
-        background: #f8f9fa;
-        border-radius: 8px;
-        border-left: 3px solid #007bff;
-        animation: slideInDown 0.3s ease-out;
-    }
-
-    .reply-form .form-control {
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-        font-size: 0.85rem;
-    }
-
-    .submit-reply {
-        background: #007bff;
-        border: none;
-        border-radius: 15px;
-        padding: 0.4rem 1rem;
-        color: white;
-        font-weight: 500;
-        font-size: 0.8rem;
-        transition: all 0.3s ease;
-    }
-
-    .submit-reply:hover {
-        background: #0056b3;
-        transform: translateY(-1px);
-    }
-
-    /* Mention System */
-    .mention-list {
-        position: absolute;
-        background: white;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        width: 200px;
-        max-height: 150px;
-        overflow-y: auto;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        padding: 0.25rem 0;
-        display: none;
-        z-index: 1000;
-        animation: slideInUp 0.2s ease-out;
-    }
-
-    .mention-item {
-        display: flex;
-        align-items: center;
-        padding: 0.5rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 4px;
-        margin: 0 0.25rem;
-        font-size: 0.8rem;
-    }
-
-    .mention-item:hover {
-        background: #f8f9fa;
-        transform: translateX(3px);
-    }
-
-    /* Load More */
-    .load-more-container {
-        text-align: center;
-        margin-top: 1.5rem;
-    }
-
-    .btn-link {
-        color: #007bff;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        background: white;
-        border: 1px solid #007bff;
-        transition: all 0.3s ease;
-        display: inline-block;
-        font-size: 0.85rem;
-    }
-
-    .btn-link:hover {
-        background: #007bff;
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    /* Animations */
-    @keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes slideInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-
-    /* Mobile */
-    @media (max-width: 768px) {
-
-        .comment-section h5 {
-            font-size: 1.1rem;
-        }
-
-        .meta {
-            font-size: 0.8rem;
-            gap: 0.25rem;
-        }
-
-        .role-badge {
-            font-size: 0.65rem;
-            padding: 0.15rem 0.4rem;
-        }
-
-        .comment-actions {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-
-        .reaction-group {
-            left: -80px;
-            max-width: 250px;
-        }
-
-        .reaction-btn {
-            width: 28px;
-            height: 28px;
-            font-size: 0.75rem;
-        }
-
-        .reply-form {
-            padding: 0.5rem;
-        }
-
-        .blog-comment ul.comments ul:before {
-            left: -8px;
-        }
-
-        .blog-comment ul.comments ul li:before {
-            left: -8px;
-            width: 8px;
-        }
-    }
-</style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/frontend/css/comment-styles.css') }}" rel="stylesheet">
 @endpush
 <section id="comments" class="comment-section">
     <div class="container px-2 px-md-3">
@@ -306,40 +39,46 @@
 @include('Frontend.components.comment-edit-history-modal')
 
 @push('scripts')
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let loadMoreBtn = document.getElementById("load-more-comments");
+    <script src="{{ asset('assets/frontend/js/comment-functions.js') }}"></script>
+    <script>
+        // Function to load CSS and JS assets for new comments
+        function loadCommentAssets() {
+            // Load CSS files if not already loaded
+            if (!$('link[href*="comment-styles.css"]').length) {
+                $('head').append('<link href="{{ asset("assets/frontend/css/comment-styles.css") }}" rel="stylesheet">');
+            }
 
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener("click", function () {
-                let nextPageUrl = this.getAttribute("data-next-page");
+            // Reset initialization flags to ensure new comments get proper functionality
+            if (typeof resetCommentInitialization === 'function') {
+                resetCommentInitialization();
+            }
 
-                if (!nextPageUrl) return;
-
-                fetch(nextPageUrl)
-                    .then(response => response.text())
-                    .then(data => {
-                        let parser = new DOMParser();
-                        let doc = parser.parseFromString(data, "text/html");
-
-                        // Lấy danh sách bình luận mới từ trang tiếp theo
-                        let newComments = doc.getElementById("comments-list").innerHTML;
-                        document.getElementById("comments-list").insertAdjacentHTML("beforeend", newComments);
-
-                        // Cập nhật URL của nút nếu còn trang tiếp theo
-                        let newNextPageUrl = doc.getElementById("load-more-comments")?.getAttribute("data-next-page");
-                        if (newNextPageUrl) {
-                            loadMoreBtn.setAttribute("data-next-page", newNextPageUrl);
-                        } else {
-                            loadMoreBtn.remove(); // Ẩn nút nếu không còn trang
-                        }
-                    })
-                    .catch(error => console.error("Lỗi tải bình luận:", error));
-            });
+            // Only initialize reaction functionality for new comments
+            // Edit and delete functionality are already bound once and don't need re-initialization
+            if (typeof initializeReactionFunctionality === 'function') {
+                initializeReactionFunctionality();
+            }
         }
-    });
-</script>
 
+        // Initialize comment functionality when script loads
+        $(document).ready(function() {
+            // Load CSS files if not already loaded
+            if (!$('link[href*="comment-styles.css"]').length) {
+                $('head').append('<link href="{{ asset("assets/frontend/css/comment-styles.css") }}" rel="stylesheet">');
+            }
+
+            // Initialize all functionality once on page load
+            if (typeof initializeCommentFunctionality === 'function') {
+                initializeCommentFunctionality();
+            }
+            if (typeof initializeReactionFunctionality === 'function') {
+                initializeReactionFunctionality();
+            }
+            if (typeof initializeSmileyAndEditFunctionality === 'function') {
+                initializeSmileyAndEditFunctionality();
+            }
+        });
+    </script>
     <script>
         $(document).ready(function() {
             let page = 1;
@@ -373,6 +112,15 @@
             if (res.status === 'success') {
                 $('#comments-list').prepend(res.html);
                 $('#comment-input').val('');
+
+                // Hide empty state if it exists
+                $('.empty-comments').fadeOut(300, function() {
+                    $(this).remove();
+                });
+
+                // Load CSS and JS for the new comment
+                loadCommentAssets();
+
                 // showToast(res.message, 'success');
             }
         },
@@ -399,6 +147,10 @@
                     },
                     success: function(res) {
                         $('#comments-list').append(res.html);
+
+                        // Load CSS and JS for loaded comments
+                        loadCommentAssets();
+
                         if (!res.hasMore) {
                             $('#load-more-comments').remove();
                         }
@@ -543,6 +295,9 @@ $(document).on('click', '.mention-item', function () {
                                 replyBtn.css('display', 'inline-block');
                             }, 100);
 
+                            // Load CSS and JS for new reply
+                            loadCommentAssets();
+
                             showToast(res.message, 'success');
                         }
                     },
@@ -556,4 +311,56 @@ $(document).on('click', '.mention-item', function () {
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.min.js"></script>
+    <script>
+        // Global toast function
+        function showToast(message, type = 'info', reload = false) {
+            const bgColor = type === 'success' ? 'green' : 'red';
+            $('body').append(`
+                <div class="toast-message" style="
+                    position: fixed; bottom: 10px; right: 10px;
+                    background: ${bgColor}; color: white; padding: 10px;
+                    border-radius: 5px; z-index: 9999;">
+                    ${message}
+                </div>
+            `);
+
+            setTimeout(() => {
+                $('.toast-message').fadeOut(500, function() {
+                    $(this).remove();
+                    if (reload) location.reload();
+                });
+            }, 100);
+        }
+    </script>
+
+    <script>
+                            // Function to load CSS and JS assets for new comments
+                    function loadCommentAssets() {
+                        // Load CSS files if not already loaded
+                        if (!$('link[href*="comment-styles.css"]').length) {
+                            $('head').append('<link href="{{ asset("assets/frontend/css/comment-styles.css") }}" rel="stylesheet">');
+                        }
+
+                        // Reset initialization flags to ensure new comments get proper functionality
+                        if (typeof resetCommentInitialization === 'function') {
+                            resetCommentInitialization();
+                        }
+
+                        // Initialize comment functionality for new comments
+                        if (typeof initializeCommentFunctionality === 'function') {
+                            initializeCommentFunctionality();
+                        }
+                        if (typeof initializeReactionFunctionality === 'function') {
+                            initializeReactionFunctionality();
+                        }
+                        if (typeof initializeSmileyAndEditFunctionality === 'function') {
+                            initializeSmileyAndEditFunctionality();
+                        }
+                    }
+
+        // Load assets on page load
+        $(document).ready(function() {
+            loadCommentAssets();
+        });
+    </script>
 @endpush
