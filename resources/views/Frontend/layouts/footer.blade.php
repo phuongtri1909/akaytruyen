@@ -3,7 +3,7 @@
         <div class="container ">
             <div class="py-3 text-white g-3">
                     <h5 class="mb-4">AKAY TRUYỆN</h5>
-                    <div class="social-links-container row">
+                    <div class="social-links-container row g-3">
                          <div class="social-link-item col-12 col-md-4">
                             <a target="_blank" href="https://youtube.com/@AkayTruyen?sub_confirmation=1"
                                class="social-link youtube-link">

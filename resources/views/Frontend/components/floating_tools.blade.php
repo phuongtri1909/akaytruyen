@@ -407,17 +407,6 @@
 
     /* Mobile responsive */
     @media (max-width: 768px) {
-        .floating-wuxia-social {
-            right: 10px;
-            bottom: 10px;
-        }
-
-        .social-toggle-btn,
-        .wuxia-social {
-            width: 40px;
-            height: 40px;
-            font-size: 16px;
-        }
 
         .social-buttons-container {
             gap: 8px;
