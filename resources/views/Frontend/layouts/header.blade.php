@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-lg header__navbar p-1 header-custom">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="Logo Suu Truyen" srcset=""
+                <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="Logo akaytruyen" srcset=""
                     class="img-fluid" style="width: 200px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -138,7 +138,7 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
-                <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="Logo Suu Truyen" srcset=""
+                <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="akaytruyen" srcset=""
                     class="img-fluid" style="width: 200px;">
             </a>
             <!-- Mobile -->
@@ -166,7 +166,7 @@
             <div class="offcanvas offcanvas-end text-bg-dark w-75" tabindex="-1" id="offcanvasDarkNavbar"
                 aria-labelledby="offcanvasDarkNavbarLabel">
                 <div class="offcanvas-header">
-                    <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="Logo Suu Truyen"
+                    <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="akaytruyen"
                         srcset="" class="img-fluid" style="width: 200px;">
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
                         aria-label="Close"></button>
