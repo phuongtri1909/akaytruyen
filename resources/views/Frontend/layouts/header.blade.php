@@ -135,7 +135,7 @@
 </header>
 
 <div class="header-mobile d-sm-block d-lg-none">
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-dark header-custom">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
                 <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="akaytruyen" srcset=""
@@ -163,7 +163,7 @@
                 data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="offcanvas offcanvas-end text-bg-dark w-75" tabindex="-1" id="offcanvasDarkNavbar"
+            <div class="offcanvas offcanvas-end header-custom w-75" tabindex="-1" id="offcanvasDarkNavbar"
                 aria-labelledby="offcanvasDarkNavbarLabel">
                 <div class="offcanvas-header">
                     <img src="{{ asset('assets/frontend/images/Logoakay.png') }}" alt="akaytruyen"
