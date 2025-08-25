@@ -98,7 +98,7 @@ class HomeController extends Controller
         $selectedMonth = $request->query('month', Carbon::now()->month);
         $selectedYear = $request->query('year', Carbon::now()->year);
 
-        // Lấy danh sách các tháng có donate
+        // Lấy danh sách các tháng có donate (tối ưu query)
         $months = Cache::remember('donors:months', $cacheTtl, function () {
             return Donation::selectRaw('MONTH(donated_at) as month, YEAR(donated_at) as year')
                 ->groupBy('month', 'year')
@@ -107,7 +107,7 @@ class HomeController extends Controller
                 ->get();
         });
 
-        // Lấy danh sách donate theo tháng được chọn
+        // Lấy danh sách donate theo tháng được chọn (tổng hợp từ tất cả truyện)
         $usersDonate = User::where('donate_amount', '>', 0)
             ->whereMonth('updated_at', $selectedMonth)
             ->whereYear('updated_at', $selectedYear)
@@ -118,10 +118,11 @@ class HomeController extends Controller
             ->whereYear('donated_at', $selectedYear)
             ->selectRaw("CAST(name AS CHAR CHARACTER SET utf8mb4) as name, amount as donate_amount, donated_at as updated_at");
 
-        // Gộp hai danh sách lại và lấy toàn bộ dữ liệu
+        // Gộp hai danh sách lại và lấy toàn bộ dữ liệu (tối ưu query)
         $topDonors = Cache::remember("donors:top:{$selectedYear}-{$selectedMonth}", $cacheTtl, function () use ($usersDonate, $guestDonate) {
             return $usersDonate->union($guestDonate)
                 ->orderByDesc('donate_amount')
+                ->limit(20) // Giới hạn kết quả để tối ưu performance
                 ->get();
         });
 
@@ -250,27 +251,21 @@ class HomeController extends Controller
         try {
             $searchTerm = $request->search;
 
-            // Lấy truyện theo slug - chỉ select fields cần thiết
             $story = Story::select('id', 'slug', 'name')->where('slug', $slug)->firstOrFail();
 
-            // ✅ Chuẩn hóa từ khóa
             $decodedSearchTerm = html_entity_decode($searchTerm, ENT_QUOTES, 'UTF-8');
             $cleanedSearchTerm = $this->cleanWordText($decodedSearchTerm);
             $normalizedSearchTerm = strtolower(trim($cleanedSearchTerm));
 
-            // ✅ Tối ưu query - chỉ select fields cần thiết
             $query = Chapter::select('id', 'story_id', 'slug', 'chapter', 'name', 'content', 'created_at')
                 ->where('story_id', $story->id);
 
-            // Nếu có từ khóa, tiến hành tìm kiếm
             if (!empty($normalizedSearchTerm)) {
                 $searchNumber = preg_replace('/[^0-9]/', '', $normalizedSearchTerm);
 
                 $query->where(function ($q) use ($normalizedSearchTerm, $searchNumber) {
-                    // ✅ Tối ưu search - chỉ search trong name nếu content quá dài
                     $q->whereRaw("LOWER(CONVERT(name USING utf8mb4)) LIKE ?", ["%{$normalizedSearchTerm}%"]);
 
-                    // Chỉ search content nếu từ khóa ngắn (tránh search quá chậm)
                     if (strlen($normalizedSearchTerm) <= 50) {
                         $q->orWhereRaw("LOWER(CONVERT(content USING utf8mb4)) LIKE ?", ["%{$normalizedSearchTerm}%"]);
                     }
@@ -281,14 +276,12 @@ class HomeController extends Controller
                 });
             }
 
-            // ✅ Lấy danh sách chương với eager loading story và pagination tối ưu
             $chapters = $query->with(['story' => function($q) {
                     $q->select('id', 'slug', 'name');
                 }])
                 ->orderBy('chapter', 'desc')
                 ->paginate(50);
 
-            // ✅ Trả về kết quả dạng HTML với story slug
             return response()->json([
                 'html' => view('Frontend.components.search-results', compact('chapters', 'story'))->render()
             ]);
@@ -325,17 +318,15 @@ class HomeController extends Controller
             "...",
         ];
 
-        // ✅ Xóa khoảng trắng dư thừa
         $text = trim($text);
 
-        // ✅ Giải mã HTML entities
         $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 
-        // ✅ Thay thế các ký tự đặc biệt của Word
         return str_replace($search, $replace, $text);
     }
 
 
+    // Legacy methods for backward compatibility
     public function storeDonate(Request $request)
     {
         $request->validate([
@@ -346,10 +337,12 @@ class HomeController extends Controller
         Donation::create([
             'name' => $request->name,
             'amount' => $request->amount,
+            'story_id' => null, // Legacy donations without story
         ]);
 
         return redirect()->back()->with('success', 'Donate thành công!');
     }
+
     public function destroy($id)
     {
         $donation = Donation::find($id);
@@ -359,4 +352,6 @@ class HomeController extends Controller
         }
         return redirect()->back()->with('error', 'Không tìm thấy donate!');
     }
+
+
 }

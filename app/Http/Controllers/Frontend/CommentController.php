@@ -62,34 +62,35 @@ class CommentController extends Controller
 
     public function deleteComment($comment)
     {
+
+
         $authUser = auth()->user();
         $comment = Comment::with('user')->find($comment);
 
         if (!$comment) {
             return redirect()->route('admin.comment.index')->with('error', 'Không tìm thấy bình luận này.');
         }
-
         // Admin can delete all comments
-        if ($authUser->role === 'admin') {
+        if ($authUser->hasRole('Admin')) {
             $comment->delete();
-            return redirect()->route('admin.comment.index')->with('success', 'Xóa bình luận thành công.');
+            return redirect()->route('admin.comment.index')->with('successMessage', 'Xóa bình luận thành công.');
         }
 
         // Mod can delete except admin comments
-        if ($authUser->role === 'mod') {
-            if ($comment->user && $comment->user->role === 'admin') {
-                return redirect()->route('admin.comment.index')->with('error', 'Không thể xóa bình luận của Admin.');
+        if ($authUser->hasRole('Mod')) {
+            if ($comment->user && $comment->user->hasRole('Admin')) {
+                return redirect()->route('admin.comment.index')->with('errorMessage', 'Không thể xóa bình luận của Admin.');
 
             }
             $comment->delete();
-            return redirect()->route('admin.comment.index')->with('success', 'Xóa bình luận thành công.');
+            return redirect()->route('admin.comment.index')->with('successMessage', 'Xóa bình luận thành công.');
 
         }
 
-        return redirect()->route('admin.comment.index')->with('error', 'Bạn không có quyền thực hiện thao tác này.');
+        return redirect()->route('admin.comment.index')->with('errorMessage', 'Bạn không có quyền thực hiện thao tác này.');
 
     }
-    
+
 
     public function storeClient(Request $request, Chapter $chapter)
     {
@@ -141,10 +142,10 @@ class CommentController extends Controller
         $taggedUsernames = [];
 
         preg_match_all('/@([\p{L}\p{N}_\-\x{00C0}-\x{017F}]+(?:\s[\p{L}\p{N}_\-\x{00C0}-\x{017F}]+)*)/u', $comment->comment, $matches);
-        
+
         if (!empty($matches[1])) {
             $taggedUsernames = array_unique($matches[1]);
-        
+
             foreach ($taggedUsernames as $tag) {
                 // Chuyển chapter_id sang int
                 $chapterId = (int) $request->chapter_id;
@@ -152,14 +153,14 @@ class CommentController extends Controller
                     \Log::error("Invalid chapter_id: $chapterId for comment ID: {$comment->id}");
                     continue;
                 }
-        
+
                 // 1. Kiểm tra có role nào trùng tên tag không
                 $role = Role::where('name', $tag)->first();
-        
+
                 if ($role) {
                     // Nếu tag là role → lấy toàn bộ user có role đó
                     $usersWithRole = \App\Models\User::role($role->name)->get();
-        
+
                     foreach ($usersWithRole as $user) {
                         // Không tag chính mình
                         if ($user->id !== auth()->id()) {
@@ -174,7 +175,7 @@ class CommentController extends Controller
                 } else {
                     // 2. Không phải role → xử lý như tag username thường
                     $taggedUser = \App\Models\User::where('name', 'like', "$tag%")->first();
-        
+
                     if ($taggedUser && $taggedUser->id !== auth()->id()) {
                         UserTagged::create([
                             'user_id'    => $taggedUser->id,
@@ -186,7 +187,7 @@ class CommentController extends Controller
                 }
             }
         }
-        
+
         $comment->load('user');
 
         return response()->json([
@@ -245,44 +246,44 @@ class CommentController extends Controller
     {
         $authUser = auth()->user();
         $comment = Comment::find($id);
-    
+
         if (!$comment) {
             return response()->json(['status' => 'error', 'message' => 'Không tìm thấy bình luận này'], 404);
         }
-    
-        if ($authUser->hasRole('Admin') || 
+
+        if ($authUser->hasRole('Admin') ||
         ($authUser->hasRole('Mod') && (!$comment->user || !$comment->user->hasRole('Admin')))) {
         $comment->delete();
         return response()->json(['status' => 'success', 'message' => 'Xóa bình luận thành công']);
     }
-    
+
         return response()->json(['status' => 'error', 'message' => 'Không thể xóa bình luận của Admin'], 403);
     }
-    
+
 
     public function xoa($id)
     {
             $comment = Comment::find($id);
-        
+
         if (!$comment) {
             return response()->json(['error' => 'Bình luận không tồn tại!'], 404);
         }
-    
+
         $comment->delete();
-    
+
     return redirect()->back()->with('success', 'Bình luận đã được xóa!');
     }
 
     // public function destroy($id)
     // {
     //     $comment = Comment::find($id);
-        
+
     //     if (!$comment) {
     //         return response()->json(['error' => 'Bình luận không tồn tại!'], 404);
     //     }
-    
+
     //     $comment->delete();
-    
+
     // return redirect()->back()->with('success', 'Bình luận đã được xóa!');
 
     // }
@@ -302,12 +303,12 @@ class CommentController extends Controller
     if (!$comment->chapter) {
         return redirect()->back()->with('error', 'Bình luận này không thuộc chương nào.');
     }
-    
+
     return redirect()->route('chapter', [
         'slugStory' => $comment->chapter->story->slug ?? '',
         'slugChapter' => $comment->chapter->slug ?? ''
     ])->with('success', 'Xóa bình luận thành công');
-    
+
 }
 
 }

@@ -151,6 +151,8 @@
                                 </p>
                             </div>
 
+
+
                             @if (count($chaptersNew) > 0)
                                 <div class="col-12 col-md-12 col-lg-9">
                                     @include('Frontend.snippets.title_component', [
@@ -167,6 +169,40 @@
                                                 </li>
                                             @endforeach
                                         </ul>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Thông tin Donate -->
+                            @if($donates->count() > 0)
+                                <div class="col-12">
+                                    <div class="donate-section">
+                                        <h6 class="donate-title">
+                                            <i class="fas fa-heart text-danger me-2"></i>Thông tin Ủng hộ
+                                        </h6>
+                                        <div class="donate-grid">
+                                            @foreach($donates as $donate)
+                                                <div class="donate-item">
+                                                    <div class="donate-bank">
+                                                        <i class="fas fa-university text-primary"></i>
+                                                        <div>
+                                                            <strong>{{ $donate->bank_name }}</strong>
+                                                            @if($donate->donate_info)
+                                                                <div class="text-muted small">{{ $donate->donate_info }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    @if($donate->image)
+                                                        <div class="donate-qr">
+                                                            <img src="{{ Storage::url($donate->image) }}"
+                                                                 alt="QR {{ $donate->bank_name }}"
+                                                                 class="qr-thumb"
+                                                                 onclick="viewQRCode('{{ Storage::url($donate->image) }}', '{{ $donate->bank_name }}')">
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
                             @endif
@@ -240,6 +276,7 @@
             </div>
 
             <div class="col-12 col-md-5 col-lg-4 sticky-md-top">
+                @include('Frontend.components.story_donations', ['story' => $story])
                 @include('Frontend.snippets.top_ratings', [
                     'ratingsDay' => $ratingsDay,
                     'ratingsMonth' => $ratingsMonth,
@@ -282,6 +319,8 @@
 
 
                 @include('Frontend.sections.main.list_category')
+
+
             </div>
         </div>
 
@@ -468,6 +507,88 @@
             background: radial-gradient(circle at 30% 30%, #c4a94a, #8b7a2e 70%);
         }
 
+        /* Donate Section Styles */
+        .donate-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .donate-title {
+            color: #dc3545;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .donate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .donate-item {
+            background: white;
+            border-radius: 6px;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .donate-bank {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .donate-bank i {
+            font-size: 1.2rem;
+        }
+
+        .donate-qr {
+            flex-shrink: 0;
+        }
+
+        .qr-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .qr-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        /* Dark theme */
+        .dark-theme .donate-section {
+            background: #2c2c2c;
+            border-color: #404040;
+        }
+
+        .dark-theme .donate-item {
+            background: #333;
+            border-color: #404040;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .donate-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .donate-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
 
     </style>
 @endpush
@@ -595,5 +716,43 @@
             });
         });
     </script>
+
+    <!-- QR Code Modal -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrCodeModalLabel">QR Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="qrCodeImage" src="" alt="QR Code" class="img-fluid" style="max-width: 300px;">
+                    <p id="qrCodeTitle" class="mt-3 mb-0 fw-bold"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="downloadQRCode()">
+                        <i class="fas fa-download"></i> Tải xuống
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewQRCode(imageSrc, bankName) {
+            document.getElementById('qrCodeImage').src = imageSrc;
+            document.getElementById('qrCodeTitle').textContent = bankName;
+            new bootstrap.Modal(document.getElementById('qrCodeModal')).show();
+        }
+
+        function downloadQRCode() {
+            const link = document.createElement('a');
+            link.href = document.getElementById('qrCodeImage').src;
+            link.download = 'qr-code-' + document.getElementById('qrCodeTitle').textContent.replace(/\s+/g, '-').toLowerCase() + '.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 @endpush

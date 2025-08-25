@@ -7,6 +7,7 @@ use App\Models\Rating;
 use App\Models\Chapter;
 use App\Models\Story;
 use App\Models\User;
+use App\Models\Donate;
 use App\Repositories\Author\AuthorRepositoryInterface;
 use App\Repositories\Chapter\ChapterRepositoryInterface;
 use App\Repositories\Rating\RatingRepositoryInterface;
@@ -94,7 +95,10 @@ class StoryController extends Controller
             $ranges = array_reverse($ranges);
         }
 
-        return view('Frontend.story', compact('story','ranges' ,'chapters', 'chaptersNew', 'slug', 'ratingsDay', 'ratingsMonth', 'ratingsAllTime', 'storiesDay', 'storiesMonth', 'storiesAllTime','stats', 'totalChapters', 'totalViews', 'averageRating', 'ratingCount','storyViews'));
+        // Lấy thông tin donate cho truyện này
+        $donates = $story->donates()->orderBy('created_at', 'desc')->get();
+
+        return view('Frontend.story', compact('story','ranges' ,'chapters', 'chaptersNew', 'slug', 'ratingsDay', 'ratingsMonth', 'ratingsAllTime', 'storiesDay', 'storiesMonth', 'storiesAllTime','stats', 'totalChapters', 'totalViews', 'averageRating', 'ratingCount','storyViews', 'donates'));
     }
     public function rate(Request $request, Story $story)
 {

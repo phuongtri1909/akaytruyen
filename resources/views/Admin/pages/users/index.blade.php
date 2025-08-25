@@ -49,7 +49,7 @@
                     <div class="card-body">
                         <div class="row flex-row-reverse">
                             <div class="col">
-                                {!! 
+                                {!!
                                     \App\Helpers\SearchFormHelper::getForm(
                                         route('admin.users.index'),
                                         'GET',
@@ -79,11 +79,11 @@
                                                 "options" => ['' => '- Vai trò -'] + $roles->pluck("name", "id")->toArray(),
                                             ],
                                         ]
-                                    ) 
+                                    )
                                 !!}
                             </div>
 
-                            
+
                         </div>
                     </div>
 
@@ -160,7 +160,7 @@
                                                href="{{ route('admin.users.edit', $user->id) }}">
                                                 <i data-feather="edit" class="font-medium-2 text-body"></i>
                                             </a>
-                                            
+
                                         @endcan
                                         @can('xoa_nguoi_dung')
                                             <form id="delete-user-{{ $user->id }}" action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline-block;">
@@ -197,81 +197,13 @@
         </div>
 
         <div class="row">
-            <!-- Cột Form Thêm Donate -->
-            <div class="col-lg-3 col-sm-6">
-                <div class="donate-container h-100 d-flex flex-column p-3 position-relative">
-                    <h2 class="text-black text-center border-bottom pb-2"><b>Thêm Donate</b></h2>
-
-                    <!-- Form nhập donate -->
-                    <form action="{{ route('donate.store') }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label">Tên người donate</label>
-                            <input type="text" name="name" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Số tiền (VND)</label>
-                            <input type="number" name="amount" class="form-control" required>
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100">Thêm Donate</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Cột Danh Sách Donate -->
-            <div class="col-lg-6 col-sm-12">
-                <div class="donate-container h-100 d-flex flex-column p-3 position-relative">
-                    <h4 class="text-center border-bottom pb-2">Danh sách Donate</h4>
-
-
-                    
-                    <div class="table-responsive scrollable-table">
-                        <table class="table table-bordered text-center align-middle donate-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Tên</th>
-                                    <th>Số tiền (VND)</th>
-                                    <th>Thời gian</th>
-                                    <th>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($donations as $index => $donation)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $donation->name }}</td>
-                                        <td class="text-success fw-bold">{{ number_format($donation->amount, 0) }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($donation->donated_at)->format('d/m/Y H:i') }}</td>
-                                        <td>
-                                            <form action="{{ route('donate.destroy', $donation->id) }}" method="POST" onsubmit="return confirmDelete(event, this)">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        <!-- Hiển thị phân trang -->
-                        <div class="d-flex justify-content-center mt-3">
-                            {{ $donations->links() }}
-                        </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Tổng doanh thu theo tháng</h4>
                     </div>
-                </div>
-
-                
-
-
-                
-
-            </div>
-            <div class="donate-container h-100 d-flex flex-column p-3 position-relative">
-                        <h4 class="text-center border-bottom pb-2">Tổng doanh thu theo tháng</h4>
-                        <div class="table-responsive scrollable-table">
+                    <div class="card-body">
+                        <div class="table-responsive">
                             <table class="table table-bordered text-center align-middle">
                                 <thead>
                                     <tr>
@@ -288,17 +220,15 @@
                                             <td class="text-success fw-bold">
                                                 {{ number_format($revenue->total, 0) }} VND
                                             </td>
-
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
-
-
-    </div>
+                </div>
+            </div>
+        </div>
 
     </section>
     <style>.pagination {

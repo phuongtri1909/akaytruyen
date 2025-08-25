@@ -555,6 +555,29 @@ main {
             color: #1877f2;
         }
     }
+
+    &.discord-link {
+        &:hover {
+            border-color: #5865f2;
+            background: linear-gradient(135deg, #f0f0ff 0%, #e6e6ff 100%);
+
+            .social-icon {
+                background: linear-gradient(135deg, #5865f2 0%, #4752c4 100%);
+                color: white;
+                transform: scale(1.1);
+                box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+            }
+
+            .social-text {
+                color: #5865f2;
+            }
+        }
+
+        .social-icon {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #5865f2;
+        }
+    }
 }
 
 // Responsive Design

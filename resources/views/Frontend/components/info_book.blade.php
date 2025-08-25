@@ -23,11 +23,13 @@
                         </div>
                     </div>
                     <div class="stats-row">
-                        <div class="stat-item">
-                            <i class="fas fa-eye"></i>
-                            <span class="stat-number counter" data-target="{{ $totalViews }}">0</span>
-                            <span class="stat-label">Lượt Xem</span>
-                        </div>
+                        @if (auth()->check() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Mod') || auth()->user()->hasRole('Content')))
+                            <div class="stat-item">
+                                <i class="fas fa-eye"></i>
+                                <span class="stat-number counter" data-target="{{ $totalViews }}">0</span>
+                                <span class="stat-label">Lượt Xem</span>
+                            </div>
+                        @endif
                         <div class="stat-item">
                             <i class="fas fa-star"></i>
                             <span class="stat-number counter" data-target="{{ $totalRating }}">0</span>

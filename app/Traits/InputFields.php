@@ -131,9 +131,12 @@ trait InputFields
         ], $args);
 
         $labelCol = Arr::pull($options, 'labelCol', 3);
-        $fieldCol = 12 - $labelCol;
+        $fieldCol = Arr::pull($options, 'fieldCol', 12 - $labelCol);
 
         $html = '<div class="form-group">';
+
+        // Nếu fieldCol = 12, thì label cũng full width
+        $labelCol = $fieldCol == 12 ? 12 : $labelCol;
 
         $html .= $this->label($name, $title, $labelCol, $required);
 

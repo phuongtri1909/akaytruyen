@@ -13,8 +13,8 @@
     <section class="app-user-list">
         <div class="row" id="table-striped">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
+                <div class="content-card">
+                    <div class="filter-section">
                         @if (session()->has('success'))
                             <div class="alert alert-success p-1">
                                 {{ session()->get('success') }}
@@ -33,167 +33,164 @@
                                         'type' => 'selection',
                                         'name' => 'search[category_id]',
                                         'defaultValue' => request('search.category_id'),
-                                        'options' => ['' => '- Danh mục -'] + $categories
+                                        'options' => ['' => '- Danh mục -'] + $categories,
                                     ],
                                     [
                                         'type' => 'select2',
                                         'name' => 'search[author_id]',
                                         'defaultValue' => request('search.author_id'),
                                         'options' => ['' => '- Tác giả -'] + $authors,
-                                        'wrapClass' => 'col-md-3'
+                                        'wrapClass' => 'col-md-3',
                                     ],
                                 ]) !!}
                             </div>
                         </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table id="tableProducts" class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Ảnh</th>
-                                    <th>Tên truyện</th>
-                                    <!-- <th>Đánh giá</th> -->
-                                    <th>Full chương</th>
-                                    <th>Truyện hot</th>
-                                    <th>Truyện mới</th>
-                                    <th>Hiển thị</th>
-                                    <th></th>
-                                    <th>Tác vụ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($stories as $story)
+                    <div class="card-content">
+                        <div class="data-table-container">
+                            <table id="tableProducts" class="data-table">
+                                <thead>
                                     <tr>
-                                        <td></td>
-                                        <td>
-                                            @if ($story->image)
-                                                <img src="{{ asset($story->image) }}" alt=""
-                                                    style="margin-right: 5px; width:70px;"
-                                                    data-image-default="{{ asset('assets/admin/images/default_image.jpg') }}">
-                                            @else
-                                                <img src="{{ asset('assets/admin/images/default_image.jpg') }}"
-                                                    alt="" style="margin-right: 5px; width:70px;">
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ $story->name }}
-                                        </td>
-                                        <!-- <td>
-                                            <form data-story-name="{{ $story->name }}" data-story-id="{{ $story->id }}">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <input type="number" id="stars_{{ $story->id }}"
-                                                            class="form-control form-control-sm" placeholder="Số sao"
-                                                            name="stars"
-                                                            value="{{ isset($story->star) ? $story->star->stars : 0 }}"
-                                                            required>
-                                                        <small id="passwordHelpBlock" class="form-text text-muted">
-                                                            Số sao
-                                                        </small>
-                                                    </div>
-                                                    <div class="col">
-                                                        <input type="number" id="count_{{ $story->id }}"
-                                                            class="form-control form-control-sm"
-                                                            placeholder="Tổng lượt đánh giá" name="count"
-                                                            value="{{ isset($story->star) ? $story->star->count : 0 }}"
-                                                            required>
-                                                        <small id="passwordHelpBlock" class="form-text text-muted">
-                                                            Tổng lượt đánh giá
-                                                        </small>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-primary btn-save-stars">Lưu</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </td> -->
-
-                                        <td>
-                                            <label class="switch">
-                                                <input class="switch_is_full switch-attribute" data-type="is_full"
-                                                    type="checkbox" name="is_full"
-                                                    @if ($story->is_full) checked @endif
-                                                    data-id="{{ $story->id }}"
-                                                    data-action="{{ route('admin.story.update.attribute', $story->id) }}"
-                                                    data-method="POST">
-                                                <span class="slider"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="switch">
-                                                <input class="switch_is_hot switch-attribute" data-type="is_hot"
-                                                    type="checkbox" name="is_hot"
-                                                    @if ($story->is_hot) checked @endif
-                                                    data-id="{{ $story->id }}"
-                                                    data-action="{{ route('admin.story.update.attribute', $story->id) }}"
-                                                    data-method="POST">
-                                                <span class="slider"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="switch">
-                                                <input class="switch_is_new switch-attribute" data-type="is_new"
-                                                    type="checkbox" name="is_new"
-                                                    @if ($story->is_new) checked @endif
-                                                    data-id="{{ $story->id }}"
-                                                    data-action="{{ route('admin.story.update.attribute', $story->id) }}"
-                                                    data-method="POST">
-                                                <span class="slider"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="switch">
-                                                <input class="switch_status switch-attribute" data-type="status"
-                                                    type="checkbox" name="status"
-                                                    @if ($story->status) checked @endif
-                                                    data-id="{{ $story->id }}"
-                                                    data-action="{{ route('admin.story.update.attribute', $story->id) }}"
-                                                    data-method="POST">
-                                                <span class="slider"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex justify-content-center align-items-center">
-                                            @can('them_chapter')
-                                                <div class="col ms-auto">
-                                                    @include('Admin.component.btn-add', [
-                                                        'href' => route('admin.chapter.create', ['story_id' => $story->id]),
-                                                    ])
-                                                </div>
-                                            @endcan
-                                                @can('xem_chapter')
-                                                    <a class="btn btn-sm btn-icon"
-                                                        href="{{ route('admin.story.show', $story->id) }}">
-                                                        <i data-feather="edit" class="font-medium-2 text-body"></i>
-                                                    </a>
-                                                @endcan
-                                                @can('xoa_story_data')
-                                                    <button
-                                                        class="btn btn-sm btn-icon delete-story btn-danger d-flex align-items-center"
-                                                        type="button" data-story-id="{{ $story->id }}"
-                                                        data-story-name="{{ $story->name }}"
-                                                        data-action="{{ route('admin.story.destroy', $story->id) }}"
-                                                        data-method="DELETE">
-                                                        <svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg"
-                                                            height="1em" viewBox="0 0 448 512">
-                                                            <path
-                                                                d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z">
-                                                            </path>
-                                                        </svg>
-                                                    </button>
-                                                @endcan
-                                            </div>
-
-                                        </td>
-                                        <td></td>
-
+                                        <th class="column-small">Ảnh</th>
+                                        <th>Tên truyện</th>
+                                        <th>Full chương</th>
+                                        <th>Truyện hot</th>
+                                        <th>Truyện mới</th>
+                                        <th>Hiển thị</th>
+                                        <th class="column-small text-center">Tác vụ</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($stories as $story)
+                                        <tr>
+
+                                            <td>
+                                                @if ($story->image)
+                                                    <img src="{{ asset($story->image) }}" alt=""
+                                                        style="margin-right: 5px; width:70px;"
+                                                        data-image-default="{{ asset('assets/admin/images/default_image.jpg') }}">
+                                                @else
+                                                    <img src="{{ asset('assets/admin/images/default_image.jpg') }}"
+                                                        alt="" style="margin-right: 5px; width:70px;">
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{ $story->name }}
+                                            </td>
+
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input switch_is_full switch-attribute"
+                                                        data-type="is_full" type="checkbox" name="is_full"
+                                                        @if ($story->is_full) checked @endif
+                                                        data-id="{{ $story->id }}"
+                                                        data-action="{{ route('admin.story.update.attribute', $story->id) }}"
+                                                        data-method="POST">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input switch_is_hot switch-attribute"
+                                                        data-type="is_hot" type="checkbox" name="is_hot"
+                                                        @if ($story->is_hot) checked @endif
+                                                        data-id="{{ $story->id }}"
+                                                        data-action="{{ route('admin.story.update.attribute', $story->id) }}"
+                                                        data-method="POST">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input switch_is_new switch-attribute"
+                                                        data-type="is_new" type="checkbox" name="is_new"
+                                                        @if ($story->is_new) checked @endif
+                                                        data-id="{{ $story->id }}"
+                                                        data-action="{{ route('admin.story.update.attribute', $story->id) }}"
+                                                        data-method="POST">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input switch_status switch-attribute"
+                                                        data-type="status" type="checkbox" name="status"
+                                                        @if ($story->status) checked @endif
+                                                        data-id="{{ $story->id }}"
+                                                        data-action="{{ route('admin.story.update.attribute', $story->id) }}"
+                                                        data-method="POST">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column gap-1">
+                                                    <div class="d-flex justify-content-center align-items-center">
+                                                        @can('them_chapter')
+                                                            <div class="col ms-auto">
+                                                                @include('Admin.component.btn-add', [
+                                                                    'href' => route('admin.chapter.create', [
+                                                                        'story_id' => $story->id,
+                                                                    ]),
+                                                                    'class' => 'btn-sm me-1',
+                                                                ])
+                                                            </div>
+                                                        @endcan
+                                                        @can('xem_chapter')
+                                                            <a class="btn btn-sm btn-icon bg-primary-2 "
+                                                                href="{{ route('admin.story.show', $story->id) }}">
+                                                                <i data-feather="edit" class="font-medium-2 text-body"></i>
+                                                            </a>
+                                                        @endcan
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-center align-items-center">
+                                                        @can('xoa_story_data')
+                                                            <button
+                                                                class="me-1 btn btn-sm btn-icon delete-story btn-danger d-flex align-items-center"
+                                                                type="button" data-story-id="{{ $story->id }}"
+                                                                data-story-name="{{ $story->name }}"
+                                                                data-action="{{ route('admin.story.destroy', $story->id) }}"
+                                                                data-method="DELETE">
+                                                                <svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg"
+                                                                    height="1em" viewBox="0 0 448 512">
+                                                                    <path
+                                                                        d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z">
+                                                                    </path>
+                                                                </svg>
+                                                            </button>
+                                                        @endcan
+                                                        <!-- Nút donate - chỉ hiển thị cho Admin và tác giả -->
+                                                        @if (auth()->user()->hasRole('Admin') || auth()->user()->id == $story->author_id)
+                                                            <a class="me-1 btn btn-sm btn-icon btn-outline-primary"
+                                                                href="{{ route('admin.donate.index', $story->id) }}"
+                                                                title="Quản lý thông tin donate">
+                                                                <svg width="1em" height="1em" viewBox="0 0 1024 1024"
+                                                                    class="icon" version="1.1"
+                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                    <path
+                                                                        d="M511.8 154.1L916 277v45.7H108V277l403.8-122.9m0-46L64 244.4v122.3h896V244.4L511.8 108.1zM113 831.4h798v16H113z"
+                                                                        fill="#39393A" />
+                                                                    <path d="M113 391.1h798v16H113z" fill="#E73B37" />
+                                                                    <path
+                                                                        d="M64.3 871.8h895.3v44H64.3zM204.2 475.6v287.3h52v44h-120v-44h52V475.6h-52v-44h120v44zM414.7 475.6v287.3h52v44h-120v-44h52V475.6h-52v-44h120v44zM625.2 475.6v287.3h52v44h-120v-44h52V475.6h-52v-44h120v44zM835.8 475.6v287.3h52v44h-120v-44h52V475.6h-52v-44h120v44z"
+                                                                        fill="#39393A" />
+                                                                </svg>
+                                                            </a>
+
+                                                            <!-- Nút donations - chỉ hiển thị cho Admin và tác giả -->
+                                                            <a class="btn btn-sm btn-icon btn-outline-info"
+                                                                href="{{ route('admin.donations.index', $story->id) }}"
+                                                                title="Quản lý danh sách donation">
+                                                                <img src="{{ asset('assets/admin/images/svg/donation.svg') }}"
+                                                                    alt="donation">
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="row">

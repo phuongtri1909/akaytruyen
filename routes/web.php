@@ -19,7 +19,8 @@ use App\Http\Controllers\Frontend\{
     CommentReactionController,
     LivechatController,
     NotificationController,
-    SitemapController
+    SitemapController,
+    DonationController
 };
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Frontend\Auth\GoogleController;
@@ -79,8 +80,11 @@ Route::post('/get-list-story-hot-random', [HomeController::class, 'getListStoryH
 Route::post('/ajax/search-story', [HomeController::class, 'searchStory'])->name('search.story');
 
 
+// Donation routes for stories (chỉ để hiển thị)
+Route::get('/truyen/{storySlug}/donations', [DonationController::class, 'getStoryDonations'])->name('story.donations');
+
+// Legacy routes for backward compatibility
 Route::post('/donate/store', [HomeController::class, 'storeDonate'])->name('donate.store');
-Route::delete('/donate/{id}', [HomeController::class, 'destroy'])->name('donate.destroy');
 
 // Authentication with Facebook
 Route::get('/auth/facebook', [SocialAuthController::class, 'redirectToProvider']);

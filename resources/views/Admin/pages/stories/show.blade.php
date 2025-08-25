@@ -29,19 +29,17 @@
                                 @csrf
                                 @method($formOptions['method'])
                                 <div class="col-12 col-md-12 mb-1">
-                                    {{-- <h4 class="text-dark">Tác giả: {{ $story->author->name ?? '' }}</h4> --}}
-                                    {!! FormUi::text('name', 'Tên truyện', $errors, $story, []) !!}
+                                    {!! FormUi::text('name', 'Tên truyện', $errors, $story, ['fieldCol' => 12]) !!}
                                 </div>
                                 <div class="col-12 col-md-12 mb-1">
-                                    {!! FormUi::text('slug', 'Slug', $errors, $story, []) !!}
+                                    {!! FormUi::text('slug', 'Slug', $errors, $story, ['fieldCol' => 12]) !!}
                                 </div>
                                 <div class="col-12 col-md-12 mb-1">
-                                    <div class="col-12 col-md-12 mb-1">
-                                        {!! FormUi::select('author_id', 'Tác giả', $errors, $authors, $story, []) !!}
-                                    </div>
+                                    {!! FormUi::select('author_id', 'Tác giả', $errors, $authors, $story, ['fieldCol' => 12]) !!}
+                                </div>
                                     <div class="col-12 col-md-12 mb-1">
                                         <label for="categories" class="col-md-3 control-label text-left">Danh mục</label>
-                                        <div class="col-md-9">
+                                        <div class="col-12">
                                             <select id="category_ids" name="category_ids[]" class="form-control has-select2"
                                                 multiple="multiple">
                                                 <option value="">- Chọn danh mục -</option>
@@ -54,27 +52,27 @@
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-12 mb-1">
-                                        {!! FormUi::wysiwyg('desc', 'Mô tả', $errors, $story, []) !!}
+                                        {!! FormUi::wysiwyg('desc', 'Mô tả', $errors, $story, ['fieldCol' => 12]) !!}
                                     </div>
                                     <div class="col-12 col-md-12 mb-1">
                                         <div class="row">
                                             <div class="col-6 col-md-4">
-                                                {!! FormUi::checkbox('status', 'Hiển thị', '', $errors, $story) !!}
+                                                {!! FormUi::checkbox('status', 'Hiển thị', '', $errors, $story, ['fieldCol' => 12]) !!}
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                {!! FormUi::checkbox('is_full', 'Full chương', '', $errors, $story) !!}
+                                                {!! FormUi::checkbox('is_full', 'Full chương', '', $errors, $story, ['fieldCol' => 12]) !!}
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                {!! FormUi::checkbox('is_new', 'Mới nhất', '', $errors, $story) !!}
+                                                {!! FormUi::checkbox('is_new', 'Mới nhất', '', $errors, $story, ['fieldCol' => 12]) !!}
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                {!! FormUi::checkbox('hot_day', 'Hot day', '', $errors, $story) !!}
+                                                {!! FormUi::checkbox('hot_day', 'Hot day', '', $errors, $story, ['fieldCol' => 12]) !!}
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                {!! FormUi::checkbox('hot_month', 'Hot month', '', $errors, $story) !!}
+                                                {!! FormUi::checkbox('hot_month', 'Hot month', '', $errors, $story, ['fieldCol' => 12]) !!}
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                {!! FormUi::checkbox('hot_all_time', 'Hot all time', '', $errors, $story) !!}
+                                                {!! FormUi::checkbox('hot_all_time', 'Hot all time', '', $errors, $story, ['fieldCol' => 12]) !!}
                                             </div>
                                         </div>
                                     </div>
@@ -85,16 +83,16 @@
                                                 data-image-default="{{ asset('assets/admin/images/default_image.jpg') }}">
                                             <input type="file" name="image" class="d-none" id="choose_file_image">
                                             <div class="action-image d-flex">
-                                                <button type="button" class="btn btn-danger" id="remove_image"
+                                                <button type="button" class="btn btn-outline-danger" id="remove_image"
                                                     style="margin-right: 5px;">Xóa</button>
-                                                <button type="button" class="btn btn-success" id="choose_image">Chọn
+                                                <button type="button" class="btn btn-outline-success" id="choose_image">Chọn
                                                     ảnh</button>
                                             </div>
                                         </div>
                                     </div>
                                     <hr>
                                     <div class="col-12">
-                                        <button class="btn btn-primary" type="submit">Cập nhật</button>
+                                        <button class="btn btn-outline-primary" type="submit">Cập nhật</button>
                                     </div>
                             </form>
                         </div>

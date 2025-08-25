@@ -24,7 +24,7 @@ class UserObserver
         }
 
         // Clear user stats cache if relevant fields changed
-        if ($affectsUserStats || $user->wasRecentlyCreated || $user->isDeleted()) {
+        if ($affectsUserStats || $user->wasRecentlyCreated) {
             Cache::forget('app:user_stats');
             Cache::forget('app:stats');
         }

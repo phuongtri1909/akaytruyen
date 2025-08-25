@@ -65,16 +65,7 @@ class Helper
         $user     = self::currentUser();
         $roleName = self::userRoleName();
 
-        $user_tdv_items = [];
-//        if ($roleName == User::ROLE_SCAN_QR_CODE) {
-//            $user_tdv_items = config('menu_qr_code');
-//        } else if ($roleName == User::ROLE_TDV || $roleName == User::ROLE_MARKETING_LOCAL) {
-//            $user_tdv_items = config('menu_tdv');
-//        } else if ($roleName == User::ROLE_THIEN_DIEU) {
-//            $user_tdv_items = config('menu_thien_dieu');
-//        } else {
         $menu_items = config('menu.default');
-//        }
 
         $user_items = [
             'name'  => 'Tài khoản:',
@@ -93,15 +84,7 @@ class Helper
                 ],
             ]
         ];
-//        if ($user->other_user) {
-//            $user_items['child'][] = [
-//                'name' => 'Đổi TK: ' . $user->other_user->username,
-//                'href' => route('admin.users.switch', $user->other_user->id),
-//                'icon' => '<i data-feather="log-in"></i>',
-//            ];
-//        }
 
-        $menu_items[] = $user_tdv_items;
         $menu_items[] = $user_items;
         foreach ($menu_items as &$item) {
             $item = self::validMenu($item, $user);
@@ -376,5 +359,14 @@ class Helper
         $text = preg_replace_callback($emojiPattern, fn($m) => '<span class="emoji">'.$m[0].'</span>', $text);
 
         return nl2br('<span class="text">'.$text.'</span>');
+    }
+
+    public static function getVietnameseMonth($month) {
+        $months = [
+            '01' => 'T1', '02' => 'T2', '03' => 'T3', '04' => 'T4',
+            '05' => 'T5', '06' => 'T6', '07' => 'T7', '08' => 'T8',
+            '09' => 'T9', '10' => 'T10', '11' => 'T11', '12' => 'T12'
+        ];
+        return $months[$month] ?? 'T1';
     }
 }

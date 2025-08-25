@@ -96,4 +96,20 @@ class Story extends Model
     {
         return $this->hasMany(Rating::class, 'story_id');
     }
+
+    /**
+     * Quan hệ một-nhiều với bảng donates
+     */
+    public function donates()
+    {
+        return $this->hasMany(Donate::class, 'story_id');
+    }
+
+    /**
+     * Quan hệ một-nhiều với bảng donations
+     */
+    public function donations()
+    {
+        return $this->hasMany(Donation::class, 'story_id');
+    }
 }

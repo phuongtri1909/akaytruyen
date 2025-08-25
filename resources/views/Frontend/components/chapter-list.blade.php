@@ -1,14 +1,4 @@
 @php
-    // Helper function to convert month to Vietnamese
-    function getVietnameseMonth($month) {
-        $months = [
-            '01' => 'T1', '02' => 'T2', '03' => 'T3', '04' => 'T4',
-            '05' => 'T5', '06' => 'T6', '07' => 'T7', '08' => 'T8',
-            '09' => 'T9', '10' => 'T10', '11' => 'T11', '12' => 'T12'
-        ];
-        return $months[$month] ?? 'T1';
-    }
-
     // Get story slug from first chapter or passed parameter
     $storySlug = $storySlug ?? ($chapters->first() ? $chapters->first()->story->slug : '');
 @endphp
@@ -23,7 +13,7 @@
                         class="chapter-link-mobile">
                         <div class="chapter-date-mobile">
                             <div class="date-day">{{ $chapter->created_at->format('d') }}</div>
-                            <div class="date-month">{{ getVietnameseMonth($chapter->created_at->format('m')) }}</div>
+                            <div class="date-month">{{ \App\Helpers\Helper::getVietnameseMonth($chapter->created_at->format('m')) }}</div>
                         </div>
                         <div class="chapter-content-mobile">
                             <div class="chapter-number">Chương {{ $chapter->chapter }}</div>
@@ -55,7 +45,7 @@
                                             class="chapter-link-desktop">
                         <div class="chapter-date-desktop">
                             <div class="date-day">{{ $chapter->created_at->format('d') }}</div>
-                            <div class="date-month">{{ getVietnameseMonth($chapter->created_at->format('m')) }}</div>
+                            <div class="date-month">{{ \App\Helpers\Helper::getVietnameseMonth($chapter->created_at->format('m')) }}</div>
                         </div>
                         <div class="chapter-content-desktop">
                             <div class="chapter-number">Chương {{ $chapter->chapter }}</div>
@@ -86,7 +76,7 @@
                                             class="chapter-link-desktop">
                         <div class="chapter-date-desktop">
                             <div class="date-day">{{ $chapter->created_at->format('d') }}</div>
-                            <div class="date-month">{{ getVietnameseMonth($chapter->created_at->format('m')) }}</div>
+                            <div class="date-month">{{ \App\Helpers\Helper::getVietnameseMonth($chapter->created_at->format('m')) }}</div>
                         </div>
                         <div class="chapter-content-desktop">
                             <div class="chapter-number">Chương {{ $chapter->chapter }}</div>

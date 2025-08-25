@@ -11,7 +11,13 @@ class Donation extends Model
 
     protected $table = 'donations'; // Tên bảng
 
-    protected $fillable = ['name', 'amount', 'donated_at']; // Các cột có thể điền dữ liệu
+    protected $fillable = ['name', 'amount', 'donated_at', 'story_id']; // Các cột có thể điền dữ liệu
 
     public $timestamps = true; // Cho phép sử dụng created_at & updated_at
+
+    // Relationship với Story
+    public function story()
+    {
+        return $this->belongsTo(Story::class);
+    }
 }

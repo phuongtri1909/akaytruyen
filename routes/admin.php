@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\RatingController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\StarController;
 use App\Http\Controllers\Admin\StoryController;
+use App\Http\Controllers\Admin\DonateController;
+use App\Http\Controllers\Admin\DonationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ThongKeController;
 
@@ -65,6 +67,18 @@ Route::middleware('auth')->group(function () {
     Route::post('stars', [StarController::class, 'updateSingle'])->name('stars.update');
     Route::resource('chapter', ChapterController::class)->except('show');
     Route::get('{story_id}/chapter/create', [ChapterController::class, 'create'])->name('chapter.create');
+
+    // Donate routes (thông tin ngân hàng)
+    Route::get('story/{storyId}/donate', [DonateController::class, 'index'])->name('donate.index');
+    Route::post('story/{storyId}/donate', [DonateController::class, 'store'])->name('donate.store');
+    Route::put('donate/{donateId}', [DonateController::class, 'update'])->name('donate.update');
+    Route::delete('donate/{donateId}', [DonateController::class, 'destroy'])->name('donate.destroy');
+
+    // Donation routes (danh sách người donate)
+    Route::get('story/{storyId}/donations', [DonationController::class, 'index'])->name('donations.index');
+    Route::post('story/{storyId}/donations', [DonationController::class, 'store'])->name('donations.store');
+    Route::put('donations/{donationId}', [DonationController::class, 'update'])->name('donations.update');
+    Route::delete('donations/{donationId}', [DonationController::class, 'destroy'])->name('donations.destroy');
 
     // Route::resource('rating', RatingController::class);
     Route::get('rating', [RatingController::class, 'index'])->name('rating.index');

@@ -39,6 +39,7 @@
 
 <!-- BEGIN: Custom CSS-->
 <link rel="stylesheet" type="text/css" href="{{ mix('assets/admin/css/style.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/styles_admin.css') }}">
 <!-- END: Custom CSS-->
 
 

@@ -52,8 +52,8 @@ class UserController extends Controller
     //             return $revenue;
     //         });
 
-    
-        
+
+
     //     return view('Admin.pages.users.index', compact('users', 'roles', 'user_inactive','donations', 'monthlyRevenue','totalUserDonations'));
     // }
         public function index(Request $request)
@@ -62,15 +62,24 @@ class UserController extends Controller
         $user_inactive = User::query()->where('status', 2)->count();
         $roles         = Role::all();
         $users         = $this->service->getTable(20, [], $search);
-        $donations = Donation::orderBy('donated_at', 'desc')->paginate(20); // Lấy 20 donate mới nhất
-            // Lấy tổng doanh thu theo từng tháng
-    $monthlyRevenue = Donation::selectRaw('MONTH(donated_at) as month, YEAR(donated_at) as year, SUM(amount) as total')
-    ->groupBy('month', 'year')
-    ->orderBy('year', 'desc')
-    ->orderBy('month', 'desc')
-    ->get();
-        
-        return view('Admin.pages.users.index', compact('users', 'roles', 'user_inactive','donations', 'monthlyRevenue'));
+
+        // Lấy tổng doanh thu theo từng tháng (bao gồm cả donation và user donate)
+        $monthlyRevenue = Donation::selectRaw('MONTH(donated_at) as month, YEAR(donated_at) as year, SUM(amount) as total')
+            ->groupBy('month', 'year')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get()
+            ->map(function ($revenue) {
+                // Thêm tổng donate từ user vào mỗi tháng
+                $userDonations = User::where('donate_amount', '>', 0)
+                    ->whereMonth('updated_at', $revenue->month)
+                    ->whereYear('updated_at', $revenue->year)
+                    ->sum('donate_amount');
+                $revenue->total += $userDonations;
+                return $revenue;
+            });
+
+        return view('Admin.pages.users.index', compact('users', 'roles', 'user_inactive', 'monthlyRevenue'));
     }
 
     public function create(Request $request)
@@ -106,16 +115,16 @@ class UserController extends Controller
         if (!$user) {
             return redirect()->route('admin.users.index')->with('errorMessage', 'Người dùng không tồn tại.');
         }
-    
+
         $formOptions           = $this->service->formOptions($user);
         $formOptions['action'] = route('admin.users.update', $user_id);
         $default_values        = $formOptions['default_values'];
-    
+
         $view_data = compact('formOptions', 'default_values', 'user_id', 'user'); // Thêm biến user
-    
+
         return view('Admin.pages.users.add-edit', $view_data);
     }
-    
+
 
     public function destroy($id)
 {
@@ -172,7 +181,7 @@ if ($role_id == 6) {
 DB::table('model_has_roles')->insert($data_insert);
 
 
-    
+
 // Xử lý cấm IP nếu user hiện tại là admin
 if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Mod')) {
     // Lấy thông tin user bị cấm
@@ -313,7 +322,7 @@ if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Mod')) {
     public function getOnlineUsers()
     {
         $timeout = now()->subMinutes(60);
-    
+
         $users = \DB::table('online_users')
             ->where('last_activity', '>=', $timeout)
             ->leftJoin('users', 'online_users.user_id', '=', 'users.id')
@@ -325,11 +334,11 @@ if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Mod')) {
             ->orderBy('last_activity', 'desc')
             ->distinct() // Tránh trùng dòng (ví dụ IP trùng)
             ->get();
-    
+
         return response()->json(['users' => $users]);
     }
 
-    
-    
-    
+
+
+
 }
