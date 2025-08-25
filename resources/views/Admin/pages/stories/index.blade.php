@@ -157,7 +157,7 @@
                                                             </button>
                                                         @endcan
                                                         <!-- Nút donate - chỉ hiển thị cho Admin và tác giả -->
-                                                        @if (auth()->user()->hasRole('Admin') || auth()->user()->id == $story->author_id)
+                                                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Content') || auth()->user()->id == $story->author_id)
                                                             <a class="me-1 btn btn-sm btn-icon btn-outline-primary"
                                                                 href="{{ route('admin.donate.index', $story->id) }}"
                                                                 title="Quản lý thông tin donate">
