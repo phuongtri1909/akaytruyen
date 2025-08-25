@@ -894,6 +894,46 @@
 
 
         <style>
+            /* Fix modal animation jitter */
+            .modal.fade .modal-dialog {
+                transition: none !important;
+                transform: none !important;
+            }
+
+            .modal.show .modal-dialog {
+                transform: none !important;
+            }
+
+            .modal-backdrop.fade {
+                transition: none !important;
+            }
+
+            /* Ensure modal is stable */
+            .modal {
+                overflow: hidden !important;
+            }
+
+            .modal-dialog {
+                margin: 1.75rem auto !important;
+                pointer-events: auto !important;
+            }
+
+            /* Prevent any transform animations */
+            .modal * {
+                transform: none !important;
+                transition: none !important;
+            }
+
+            /* Fix backdrop animation */
+            .modal-backdrop {
+                opacity: 0.5 !important;
+                transition: none !important;
+            }
+
+            .modal-backdrop.show {
+                opacity: 0.5 !important;
+            }
+
             /* Compact Comment Item Styles */
             .comment-item-wrapper {
                 margin-bottom: 0.75rem;
