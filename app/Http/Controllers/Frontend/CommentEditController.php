@@ -8,6 +8,7 @@ use App\Models\CommentEditHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CommentEditController extends Controller
 {
@@ -17,7 +18,7 @@ class CommentEditController extends Controller
             $comment = Comment::with('user')->findOrFail($commentId);
 
             // Kiểm tra quyền chỉnh sửa
-            if (!Auth::check() || Auth::id() !== $comment->user_id) {
+            if (!Auth::check() || Auth::id() != $comment->user_id) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Bạn không có quyền chỉnh sửa bình luận này'
@@ -121,7 +122,7 @@ class CommentEditController extends Controller
             $comment = Comment::with('user')->findOrFail($commentId);
 
             // Kiểm tra quyền chỉnh sửa
-            if (!Auth::check() || Auth::id() !== $comment->user_id) {
+            if (!Auth::check() || Auth::id() != $comment->user_id) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Bạn không có quyền chỉnh sửa bình luận này'
@@ -138,7 +139,7 @@ class CommentEditController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Có lỗi xảy ra'
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
             ], 500);
         }
     }

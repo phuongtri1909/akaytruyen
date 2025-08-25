@@ -722,6 +722,9 @@
                 $.ajax({
                     url: `/comments/${commentId}/edit-form`,
                     type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(response) {
                         if (response.status === 'success') {
                             commentItem.find('.edit-loading').remove();
@@ -732,12 +735,24 @@
                                 commentItem.find('.edit-comment-textarea').focus();
                             }, 100);
                         } else {
+                            commentItem.find('.edit-loading').remove();
                             showToast(response.message, 'error');
                         }
                     },
                     error: function(xhr) {
                         commentItem.find('.edit-loading').remove();
-                        showToast('Có lỗi xảy ra', 'error');
+                        let errorMessage = 'Có lỗi xảy ra';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.status === 403) {
+                            errorMessage = 'Bạn không có quyền chỉnh sửa bình luận này';
+                        } else if (xhr.status === 404) {
+                            errorMessage = 'Không tìm thấy bình luận';
+                        } else if (xhr.status === 500) {
+                            errorMessage = 'Lỗi server, vui lòng thử lại';
+                        }
+                        showToast(errorMessage, 'error');
+                        console.error('Edit form error:', xhr);
                     }
                 });
             });
