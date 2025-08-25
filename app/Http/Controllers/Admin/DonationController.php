@@ -17,7 +17,7 @@ class DonationController extends Controller
         $authUser = Auth::user();
 
         // Kiểm tra quyền: Admin hoặc tác giả của truyện
-        if (!$authUser->hasRole('Admin') && $story->author_id !== $authUser->id) {
+        if (!$authUser->hasRole('Admin') && !$authUser->hasRole('Content') && $story->author_id !== $authUser->id) {
             abort(403, 'Bạn không có quyền truy cập trang này.');
         }
 
@@ -35,7 +35,7 @@ class DonationController extends Controller
             $authUser = Auth::user();
 
             // Kiểm tra quyền: Admin hoặc tác giả của truyện
-            if (!$authUser->hasRole('Admin') && $story->author_id !== $authUser->id) {
+            if (!$authUser->hasRole('Admin') && !$authUser->hasRole('Content') && $story->author_id !== $authUser->id) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Bạn không có quyền thực hiện hành động này.'
@@ -90,7 +90,7 @@ class DonationController extends Controller
             $authUser = Auth::user();
 
             // Kiểm tra quyền: Admin hoặc tác giả của truyện
-            if (!$authUser->hasRole('Admin') && $story->author_id !== $authUser->id) {
+            if (!$authUser->hasRole('Admin') && !$authUser->hasRole('Content') && $story->author_id !== $authUser->id) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Bạn không có quyền thực hiện hành động này.'
@@ -143,7 +143,7 @@ class DonationController extends Controller
             $authUser = Auth::user();
 
             // Kiểm tra quyền: Admin hoặc tác giả của truyện
-            if (!$authUser->hasRole('Admin') && $story->author_id !== $authUser->id) {
+            if (!$authUser->hasRole('Admin') && !$authUser->hasRole('Content') && $story->author_id !== $authUser->id) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Bạn không có quyền thực hiện hành động này.'
