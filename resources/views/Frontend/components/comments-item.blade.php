@@ -295,7 +295,7 @@
                             </button>
                         @endif
 
-                        @if (auth()->check() && auth()->id() === $comment->user_id)
+                        @if (auth()->check() && auth()->id() == $comment->user_id)
                             <button class="edit-btn" style="cursor: pointer;"
                                 data-id="{{ $comment->id }}" title="Chỉnh sửa bình luận">
                                 <i class="fa-solid fa-edit"></i> Sửa
